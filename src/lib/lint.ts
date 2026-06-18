@@ -5,9 +5,11 @@ import type { FileNode } from "@/types/wiki"
 import { useActivityStore } from "@/stores/activity-store"
 import { getFileName, getRelativePath, normalizePath } from "@/lib/path-utils"
 import { buildLanguageDirective } from "@/lib/output-language"
+import { parseFrontmatter } from "@/lib/frontmatter"
+import { validateDimensions } from "@/lib/dimensions"
 
 export interface LintResult {
-  type: "orphan" | "broken-link" | "no-outlinks" | "semantic"
+  type: "orphan" | "broken-link" | "no-outlinks" | "semantic" | "dimensional"
   severity: "warning" | "info"
   page: string
   detail: string
@@ -291,6 +293,51 @@ export async function runStructuralLint(projectPath: string): Promise<LintResult
           suggestedTarget: suggestedTarget?.shortName,
         })
       }
+    }
+  }
+
+  return results
+}
+
+// ── Dimensional lint ──────────────────────────────────────────────────────────
+
+/**
+ * Validate the 7-axis dimensional taxonomy on every wiki page. Deterministic
+ * (no LLM): surfaces invalid axis values + the `superseded-by` rule via
+ * `validateDimensions`. Invalid-value findings (axis severity "error") map to
+ * lint severity "warning" — the lint UI union is warning|info; a dedicated
+ * "error" tier is deferred.
+ */
+export async function runDimensionalLint(projectPath: string): Promise<LintResult[]> {
+  const wikiRoot = `${normalizePath(projectPath)}/wiki`
+  let tree: FileNode[]
+  try {
+    tree = await listDirectory(wikiRoot)
+  } catch {
+    return []
+  }
+
+  const contentFiles = flattenMdFiles(tree).filter(
+    (f) => f.name !== "index.md" && f.name !== "log.md",
+  )
+
+  const results: LintResult[] = []
+  for (const f of contentFiles) {
+    let content: string
+    try {
+      content = await readFile(f.path)
+    } catch {
+      continue // skip unreadable files
+    }
+    const shortName = getRelativePath(f.path, wikiRoot)
+    const { frontmatter } = parseFrontmatter(content)
+    for (const finding of validateDimensions(frontmatter)) {
+      results.push({
+        type: "dimensional",
+        severity: finding.severity === "info" ? "info" : "warning",
+        page: shortName,
+        detail: finding.detail,
+      })
     }
   }
 

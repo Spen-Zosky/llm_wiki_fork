@@ -11,12 +11,13 @@ import {
   Wrench,
   Trash2,
   Link,
+  Ruler,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useWikiStore } from "@/stores/wiki-store"
 import { useReviewStore } from "@/stores/review-store"
 import { useLintStore, type LintItem } from "@/stores/lint-store"
-import { runStructuralLint, runSemanticLint } from "@/lib/lint"
+import { runStructuralLint, runSemanticLint, runDimensionalLint } from "@/lib/lint"
 import { hasUsableLlm } from "@/lib/has-usable-llm"
 import { readFile, writeFile, listDirectory } from "@/commands/fs"
 import { normalizePath } from "@/lib/path-utils"
@@ -63,6 +64,7 @@ export function LintView() {
     "broken-link": { icon: Link2Off, label: t("lint.typeLabels.broken-link") },
     "no-outlinks": { icon: ArrowUpRight, label: t("lint.typeLabels.no-outlinks") },
     semantic: { icon: BrainCircuit, label: t("lint.typeLabels.semantic") },
+    dimensional: { icon: Ruler, label: t("lint.typeLabels.dimensional") },
   }), [t])
 
   const items = useLintStore((s) => s.items)
@@ -83,11 +85,12 @@ export function LintView() {
     clearLintItems()
     try {
       const structural = await runStructuralLint(pp)
-      let all = structural
+      const dimensional = await runDimensionalLint(pp)
+      let all = [...structural, ...dimensional]
 
       if (runSemantic && hasUsableLlm(llmConfig)) {
         const semantic = await runSemanticLint(pp, llmConfig)
-        all = [...structural, ...semantic]
+        all = [...all, ...semantic]
       }
 
       addLintItems(all)
