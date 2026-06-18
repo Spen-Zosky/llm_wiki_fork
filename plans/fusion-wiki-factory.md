@@ -1,6 +1,6 @@
 # Fusion Plan — llm_wiki × wiki-factory × graphify
 
-> **Status**: in progress — route C, **full-scope** (8 capabilities, phases 0-7). **Phase 0 ✅** (toolchain + build baseline on Windows/linux-pc/VM; 1534 tests green) · **Phase 1 ✅** (engine versioning + cache schema; +10 tests) · **Phase 2 (Dimensions) next**.
+> **Status**: in progress — route C, **full-scope** (8 capabilities, phases 0-7). **Phase 0 ✅** (toolchain + build baseline on Windows/linux-pc/VM; 1534 tests green) · **Phase 1 ✅** (engine versioning + cache schema; +10 tests) · **Phase 2 ✅ 2a-2c** (dimensions taxonomy + dimensional lint + freshness stamping; +26 tests) · **Phase 2d / Phase 3 next**.
 > **Created**: 2026-06-18
 > **Owner**: Enzo Spenuso (Spen-Zosky)
 > **Scope**: turn this fork (`Spen-Zosky/llm_wiki_fork`, fork of `nashsu/llm_wiki` v0.4.25) into a unified knowledge-base engine that absorbs the unique capabilities of `wiki-factory` (the personal LLM Wiki Engine, v1.3.0) and integrates `graphify` as a source-layer graph engine.
@@ -85,7 +85,7 @@ The OCI VM is headless ARM64 — it cannot *run* the Tauri desktop GUI, but it h
 
 - **Phase 0 — Setup** ✅ **DONE 2026-06-18**: Rust/Tauri toolchain on all 3 machines; build baseline green (Windows x64 + bundle, linux-pc x86-64, VM ARM64); app run + `api_server` OK on Windows; `test:mocks` 1524 green. Deferred: Claude CLI provider config (runtime; not needed until ingest). Lesson: `protoc` required by LanceDB; link is the bottleneck — use direct `cargo build` (see memory `ref_tauri_lancedb_build`).
 - **Phase 1 — Data foundations** ✅ **DONE 2026-06-18**: `src/lib/engine-version.ts` (engine.json versioning + `needsMigration`) + cache schema extended (`status`/`engineVersion`/`archivalCycles`, non-breaking) + `ensureEngineMeta` hooked in `createProject` only (legacy vaults stay migratable). +10 tests, typecheck green.
-- **Phase 2 — Dimensions + dimensional lint** (#1): the distinctive DNA of the engine. Additive, high value, low risk.
+- **Phase 2 — Dimensions + dimensional lint** (#1) ✅ **2a-2c DONE 2026-06-18**: `dimensions.ts` (7 axes + `validateDimensions` + `deriveFreshness`), `runDimensionalLint` + Lint UI, `stampFreshness` hooked in the ingest write-loop. +26 tests. 2d (per-vault `layer` extensions via a `## Dimensions` section in `schema.md` + authoring-default LLM guidance) in progress.
 - **Phase 3 — Arbitration** (#2): on top of the existing review subsystem.
 - **Phase 4 — `source_mode: linked`** (#3): to ingest your own repos (e.g. `heuresys-advanced`).
 - **Phase 5 — Archive + MkDocs export** (#5, #6): need Rust and new views.
@@ -124,9 +124,9 @@ After Phase 1, phases 2-7 are largely independent.
 
 **Scope decided (2026-06-18): FULL** — commit to all 8 capabilities across phases 0-7 (multi-week / multi-session).
 
-**Done so far**: Phase 0 (build baseline on 3 machines, 1534 tests green) + Phase 1 (data foundations) ✅.
+**Done so far**: Phase 0 + Phase 1 + Phase 2 steps 2a-2c (dimensions taxonomy, dimensional lint + UI, freshness stamping at ingest) ✅. ~1560 tests green.
 
-**Immediate next step**: Phase 2 — Dimensions (7 axes) + dimensional lint (#1): extend `wiki-schema.ts` (parse a "## Dimensions" section), `frontmatter.ts`, `lint.ts` (+`dimensional` type), hook in `ingest.ts` write-loop. Innesta sul formato reale di `schema.md` (verificato nel vault demo: sezioni `## Page Types` / `## Frontmatter` / `## Contradiction Handling`).
+**Immediate next step**: Phase 2d — a `## Dimensions` section in `schema.md` for per-vault `layer` extensions + authoring-default guidance in the generation prompt (so the LLM populates `facet`/`authority` from content). Then Phase 3 — Arbitration (#2).
 
 ---
 
