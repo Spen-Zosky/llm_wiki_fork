@@ -145,3 +145,29 @@ export function deriveFreshness(
   if (ageDays < 730) return "aged" // ~2 years
   return "stale-info"
 }
+
+const FRONTMATTER_RE = /^(---\s*\r?\n)([\s\S]*?)(\r?\n---\s*(?:\r?\n|$))/
+
+/**
+ * Stamp a derived `freshness:` into a page's frontmatter — only when `updated:`
+ * is present and `freshness:` is absent. Idempotent and non-destructive: never
+ * overwrites an explicit `freshness`, and is a no-op when there is no
+ * frontmatter, no `updated:`, or the derivation is null (future / would-be
+ * evergreen). Mirrors ingest's frontmatter-block date stamping.
+ */
+export function stampFreshness(content: string, todayISO: string): string {
+  const m = content.match(FRONTMATTER_RE)
+  if (!m) return content
+
+  const payload = m[2]
+  if (/(?:^|\n)\s*freshness\s*:/i.test(payload)) return content // explicit → keep
+
+  const updatedMatch = payload.match(/(?:^|\n)\s*updated\s*:\s*["']?([^\n\r"']+)/i)
+  if (!updatedMatch) return content
+
+  const derived = deriveFreshness(updatedMatch[1].trim(), todayISO)
+  if (!derived) return content
+
+  const newPayload = `${payload.trimEnd()}\nfreshness: ${derived}`
+  return `${m[1]}${newPayload}${m[3]}${content.slice(m[0].length)}`
+}

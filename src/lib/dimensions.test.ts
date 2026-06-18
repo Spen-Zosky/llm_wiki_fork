@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { validateDimensions, deriveFreshness } from "./dimensions"
+import { validateDimensions, deriveFreshness, stampFreshness } from "./dimensions"
 
 describe("dimensions — validateDimensions", () => {
   it("returns no findings when no axes are present (all optional)", () => {
@@ -87,5 +87,40 @@ describe("dimensions — deriveFreshness", () => {
       deriveFreshness(d, today),
     )
     expect(derived).not.toContain("evergreen")
+  })
+})
+
+describe("dimensions — stampFreshness", () => {
+  const today = "2026-06-18"
+
+  it("appends derived freshness when updated is present and freshness absent", () => {
+    const out = stampFreshness("---\ntype: concept\nupdated: 2026-06-01\n---\nbody", today)
+    expect(out).toContain("freshness: live")
+    expect(out).toContain("body")
+  })
+
+  it("does not overwrite an explicit freshness", () => {
+    const content = "---\nupdated: 2020-01-01\nfreshness: evergreen\n---\nx"
+    expect(stampFreshness(content, today)).toBe(content)
+  })
+
+  it("is a no-op when updated is absent", () => {
+    const content = "---\ntype: concept\n---\nx"
+    expect(stampFreshness(content, today)).toBe(content)
+  })
+
+  it("is a no-op when there is no frontmatter", () => {
+    const content = "no frontmatter here"
+    expect(stampFreshness(content, today)).toBe(content)
+  })
+
+  it("is a no-op for a future updated date (derivation null)", () => {
+    const content = "---\nupdated: 2027-01-01\n---\nx"
+    expect(stampFreshness(content, today)).toBe(content)
+  })
+
+  it("stamps stale-info for very old pages", () => {
+    const out = stampFreshness("---\nupdated: 2023-01-01\n---\nx", today)
+    expect(out).toContain("freshness: stale-info")
   })
 })

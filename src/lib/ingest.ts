@@ -27,6 +27,7 @@ import { sanitizeIngestedFileContent } from "@/lib/ingest-sanitize"
 import { mergePageContent, type MergeFn } from "@/lib/page-merge"
 import { withProjectLock } from "@/lib/project-mutex"
 import { parseFrontmatter } from "@/lib/frontmatter"
+import { stampFreshness } from "@/lib/dimensions"
 import { makeQuerySlug } from "@/lib/wiki-filename"
 import type { FileNode } from "@/types/wiki"
 import {
@@ -1555,6 +1556,7 @@ async function writeFileBlocks(
       content = stampGeneratedLogDate(content, today)
     } else if (!isListingPath(relativePath)) {
       content = stampGeneratedFrontmatterDates(content, today)
+      content = stampFreshness(content, today)
     }
     if (!isLogPath(relativePath) && !isListingPath(relativePath)) {
       content = canonicalizeSourcesField(content, sourceFileName)
