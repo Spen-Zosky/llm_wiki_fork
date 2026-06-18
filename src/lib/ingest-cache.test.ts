@@ -94,3 +94,39 @@ describe("ingest-cache — checkIngestCache", () => {
     expect(result).toBeNull()
   })
 })
+
+describe("ingest-cache — schema additions (status + engineVersion, backward-compat)", () => {
+  it("stamps new entries with status 'active' and the engine version", async () => {
+    let persisted = ""
+    mockReadFile.mockImplementation(async () => persisted || JSON.stringify({ entries: {} }))
+    mockWriteFile.mockImplementation(async (_p: string, c: string) => {
+      persisted = c
+    })
+    await saveIngestCache("/project", "foo.pdf", "hello", ["wiki/sources/foo.md"])
+
+    const data = JSON.parse(persisted)
+    expect(data.entries["foo.pdf"].status).toBe("active")
+    expect(typeof data.entries["foo.pdf"].engineVersion).toBe("string")
+    expect(typeof data.schemaVersion).toBe("number")
+  })
+
+  it("still returns a cache hit for legacy entries lacking the new fields", async () => {
+    let persisted = ""
+    mockReadFile.mockImplementation(async () => persisted || JSON.stringify({ entries: {} }))
+    mockWriteFile.mockImplementation(async (_p: string, c: string) => {
+      persisted = c
+    })
+    // Round-trip to get the correct hash of "hello", then strip the new
+    // fields to simulate an entry written by an older build.
+    await saveIngestCache("/project", "foo.pdf", "hello", ["wiki/sources/foo.md"])
+    const data = JSON.parse(persisted)
+    delete data.entries["foo.pdf"].status
+    delete data.entries["foo.pdf"].engineVersion
+    delete data.schemaVersion
+    persisted = JSON.stringify(data)
+
+    mockFileExists.mockResolvedValue(true)
+    const result = await checkIngestCache("/project", "foo.pdf", "hello")
+    expect(result).toEqual(["wiki/sources/foo.md"])
+  })
+})

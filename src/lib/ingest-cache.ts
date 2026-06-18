@@ -1,5 +1,6 @@
 import { readFile, writeFile, fileExists } from "@/commands/fs"
 import { normalizePath, isAbsolutePath } from "@/lib/path-utils"
+import { CURRENT_ENGINE_VERSION, CURRENT_SCHEMA_VERSION } from "./engine-version"
 
 /**
  * SHA256-based ingest cache.
@@ -7,14 +8,32 @@ import { normalizePath, isAbsolutePath } from "@/lib/path-utils"
  * Cache file: .llm-wiki/ingest-cache.json
  */
 
+/** Source lifecycle status. Absent ⇒ "active" (backward-compat with old entries). */
+export type SourceStatus = "active" | "retracted" | "archived"
+
+/** Archive cycle record — sources snapshotted out of the vault (capability #5). */
+export interface ArchivalCycle {
+  id: string
+  createdAt: number
+  snapshotPath: string
+  sources: string[]
+}
+
 interface CacheEntry {
   hash: string
   timestamp: number
   filesWritten: string[]
+  // Additive (optional → backward-compatible with pre-existing entries):
+  status?: SourceStatus // default "active"
+  engineVersion?: string // engine version that wrote the entry
+  archivedCycle?: string // archival cycle id, when status === "archived"
 }
 
 interface CacheData {
   entries: Record<string, CacheEntry> // keyed by source filename
+  // Additive (optional):
+  schemaVersion?: number // cache schema version
+  archivalCycles?: ArchivalCycle[] // archive history (capability #5)
 }
 
 async function sha256(content: string): Promise<string> {
@@ -108,8 +127,14 @@ export async function saveIngestCache(
     hash,
     timestamp: Date.now(),
     filesWritten,
+    status: "active",
+    engineVersion: CURRENT_ENGINE_VERSION,
   }
-  await saveCache(projectPath, { entries: newEntries })
+  await saveCache(projectPath, {
+    ...cache,
+    entries: newEntries,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+  })
 }
 
 /**
@@ -122,5 +147,5 @@ export async function removeFromIngestCache(
   const cache = await loadCache(projectPath)
   const newEntries = { ...cache.entries }
   delete newEntries[sourceFileName]
-  await saveCache(projectPath, { entries: newEntries })
+  await saveCache(projectPath, { ...cache, entries: newEntries })
 }

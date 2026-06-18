@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core"
 import type { FileNode, WikiProject } from "@/types/wiki"
 import { ensureProjectId, upsertProjectInfo } from "@/lib/project-identity"
+import { ensureEngineMeta } from "@/lib/engine-version"
 import { isAbsolutePath } from "@/lib/path-utils"
 
 /** Raw shape returned by the Rust commands — id is attached client-side. */
@@ -117,6 +118,9 @@ export async function createProject(
   const raw = await invoke<RawProject>("create_project", { name, path })
   const id = await ensureProjectId(raw.path)
   await upsertProjectInfo(id, raw.path, raw.name)
+  // Stamp the fused-engine version on brand-new vaults (see engine-version.ts).
+  // Only on create — opening a legacy vault must stay migratable.
+  await ensureEngineMeta(raw.path)
   return { id, name: raw.name, path: raw.path }
 }
 
