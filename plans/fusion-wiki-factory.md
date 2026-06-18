@@ -1,6 +1,6 @@
 # Fusion Plan — llm_wiki × wiki-factory × graphify
 
-> **Status**: planning — route C chosen, **full-scope commitment** (all 7 capabilities, phases 0-6); execution not yet started
+> **Status**: planning — route C chosen, **full-scope commitment** (all 8 capabilities, phases 0-7); execution not yet started
 > **Created**: 2026-06-18
 > **Owner**: Enzo Spenuso (Spen-Zosky)
 > **Scope**: turn this fork (`Spen-Zosky/llm_wiki_fork`, fork of `nashsu/llm_wiki` v0.4.25) into a unified knowledge-base engine that absorbs the unique capabilities of `wiki-factory` (the personal LLM Wiki Engine, v1.3.0) and integrates `graphify` as a source-layer graph engine.
@@ -57,6 +57,7 @@ Effort: **S** ≤1d · **M** 2-5d · **L** 1-2 weeks (estimates; low risk = addi
 | 5 | **Archive cycle (tar.gz snapshot + gated removal)** | new `src/lib/archive-snapshot.ts` + new Rust command (needs `tar`/`flate2` crate — **verify `Cargo.toml`**) registered in `lib.rs::invoke_handler` + new view | additive + Rust + UI | L | Medium |
 | 6 | **MkDocs static-site export** | new `src/lib/export-mkdocs.ts` + new view (`activeView` union in `wiki-store.ts:323`, switch in `content-area.tsx:14`, icon in `icon-sidebar.tsx`) | additive + UI | M | Low |
 | 7 | **Graph dual-layer (graphify integration)** | invoke `graphifyy` on `raw/sources/` via the existing external-CLI pattern (`cli_resolver.rs` / `claude_cli.rs` / `codex_cli.rs`) **or** consume its MCP server; surface its `graph.json` + audit trail alongside the native wiki-link graph | integration (engine) | M | Low |
+| 8 | **Web/served target** (browser access via public IP) | extend `src-tauri/src/api_server.rs` (already serves read + `/search` + `/graph` on :19828) with write/ingest + LLM-exec primitives; add a `fetch`-based variant of `src/commands/fs.ts`; serve the React SPA. Domain logic stays TS (runs in browser). | additive + Rust + frontend | M-L | **High** (FS exposed on public IP) |
 
 ### Note on #7 — why graphify is complementary, not redundant
 
@@ -66,6 +67,17 @@ llm_wiki **already has** a sophisticated graph: 4-signal relevance (directLink 3
 - graphify → *what is in the sources and how it connects, with provenance*
 
 The audit trail (provenance per edge) aligns directly with wiki-factory's "zero hallucination / mandatory citations" doctrine. graphify also brings: code AST graph, BFS/DFS/shortest-path/explain query primitives, multi-export (Neo4j/GraphML/SVG), and a ready MCP server.
+
+### Note on #8 — web/served target (turns the headless VM into a host)
+
+The OCI VM is headless ARM64 — it cannot *run* the Tauri desktop GUI, but it has a **public IP**, so it can **serve** the engine to any browser/device. Two paths:
+
+- **Immediate workaround (no code)**: run the native app inside a virtual display (`Xvfb`) exposed via **noVNC** (VNC-over-WebSocket). Desktop streaming — single-session, heavier; lock down with TLS + password + restricted OCI ingress.
+- **Architectural (fusion-aligned)**: serve the React SPA + an HTTP backend exposing the primitives that today go through `invoke()`. Feasible because: (a) **domain logic is already TS in the frontend** (ingest/lint/query run in the WebView → would run identically in a browser); (b) `invoke()` calls are few and centralized (~52, mostly `src/commands/fs.ts` 23, `embedding.ts` 8, cli-transport 7, `file-sync.ts` 6); (c) `api_server.rs` **already** exposes read + `/search` (LanceDB vector) + `/graph` over HTTP with token-auth + `safe_join`. The code even flags the gap (`api_server.rs:270`): *"expose [chat/RAG] after moving the shared chat pipeline behind a backend command."* So the web target ≈ extend `api_server.rs` with write/ingest + LLM-exec primitives + a `fetch`-based `fs.ts` — **not a rewrite**. Result: a real multi-device webapp on the public IP, mirroring the wiki-factory Console model.
+
+**Security is the gating concern**: filesystem primitives on a public IP require strong auth (token present), vault sandboxing (`safe_join` present), TLS, and a locked-down OCI ingress rule.
+
+**Deployment model (decided 2026-06-18): Model B — VM as central host.** A single served instance runs on the **OCI VM** (public IP, otherwise-wasted headless box); the canonical vaults live there. **Windows and linux-pc** reach it as **browser clients** for remote use, and run the **native Tauri desktop app** for local/offline work. The web target is a single shared instance, not one-per-machine. Implication: keeping the desktop (local) and VM (central) vaults coherent requires a **sync channel** — wiki-factory's SYNC family (git for `wiki/` + rsync for `raw/`) — a dependency to schedule alongside #8 if offline-desktop and central-web must stay in sync. The public-IP hardening (auth/TLS/ingress) applies specifically to the VM host.
 
 ---
 
@@ -78,8 +90,9 @@ The audit trail (provenance per edge) aligns directly with wiki-factory's "zero 
 - **Phase 4 — `source_mode: linked`** (#3): to ingest your own repos (e.g. `heuresys-advanced`).
 - **Phase 5 — Archive + MkDocs export** (#5, #6): need Rust and new views.
 - **Phase 6 — Graph dual-layer / graphify** (#7): integration; independent, can be pulled earlier if desired.
+- **Phase 7 — Web/served target** (#8) — **Model B: VM = central host**: noVNC for an immediate public-IP view (no code); then served-SPA + HTTP-primitives on the VM. Windows/linux-pc are browser clients (+ native desktop for local/offline). Independent; security-gated; needs a vault-sync channel (SYNC) for desktop↔VM coherence.
 
-After Phase 1, phases 2-6 are largely independent.
+After Phase 1, phases 2-7 are largely independent.
 
 ---
 
@@ -103,12 +116,13 @@ After Phase 1, phases 2-6 are largely independent.
 | graphify license (re: bundling/distribution) | Unknown × Medium | **Verify `graphifyy` license** before bundling. llm_wiki itself is GPLv3 — factor in. |
 | Python dependency added to a Tauri/Rust app | Low × Low | App already shells to external CLIs; document the runtime requirement. |
 | Build cost on old Mac hardware | Medium × Low | Build on Windows or OCI VM, not the Mac. |
+| Web target (#8): FS primitives exposed on public IP | Medium × High | Token auth + `safe_join` sandbox (both already in `api_server.rs`) + TLS + locked-down OCI ingress; never expose write/ingest unauthenticated. |
 
 ---
 
 ## 8. Decision & next step
 
-**Scope decided (2026-06-18): FULL** — commit to all 7 capabilities across phases 0-6 (multi-week / multi-session).
+**Scope decided (2026-06-18): FULL** — commit to all 8 capabilities across phases 0-7 (multi-week / multi-session).
 
 **Immediate next step**: Phase 0 — Setup. Install Rust/Tauri toolchain (rustup + WebView2 + MSVC Build Tools), `pnpm install`, baseline build & run, run the test suite, configure Claude CLI as provider. Nothing else proceeds until a clean baseline build runs.
 
@@ -126,6 +140,7 @@ After Phase 1, phases 2-6 are largely independent.
 - Graph: `src/lib/graph-relevance.ts`, `src/lib/wiki-graph.ts`, `src/lib/graph-insights.ts`
 - Retrieval: `src/lib/search.ts`, `src/lib/embedding.ts` ↔ Rust `src-tauri/src/commands/{search.rs,vectorstore.rs}`
 - External CLI pattern: `src-tauri/src/commands/{cli_resolver.rs,claude_cli.rs,codex_cli.rs}`
+- HTTP API server (web-target base): `src-tauri/src/api_server.rs` (read + `/search` w/ LanceDB vector + `/graph` on :19828; token-auth + `safe_join`; `api_server.rs:270` flags chat/RAG as not-yet-exposed)
 - View wiring: `src/stores/wiki-store.ts` (`activeView` ~323), `src/components/layout/{content-area.tsx,icon-sidebar.tsx}`
 - Command registration: `src-tauri/src/lib.rs::invoke_handler`
 
