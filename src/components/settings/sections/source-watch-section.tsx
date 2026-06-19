@@ -127,6 +127,29 @@ export function SourceWatchSection({ draft, setDraft, projectReady }: Props) {
           </div>
         </label>
 
+        <label className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            checked={config.linkedSourcesEnabled}
+            onChange={(event) => updateConfig({ linkedSourcesEnabled: event.target.checked })}
+            disabled={!projectReady}
+            className="mt-1 h-4 w-4"
+          />
+          <div className="space-y-1">
+            <span className="text-sm font-semibold">
+              {t("settings.sections.sourceWatch.linkedSources", {
+                defaultValue: "Enable linked sources (in-place ingest)",
+              })}
+            </span>
+            <p className="text-xs leading-relaxed text-muted-foreground">
+              {t("settings.sections.sourceWatch.linkedSourcesDescription", {
+                defaultValue:
+                  "Adds a Link button in the Sources view to ingest an external folder in place, without copying it into raw/sources. Files are read from their original location; unlinking never deletes them.",
+              })}
+            </p>
+          </div>
+        </label>
+
         {!projectReady && (
           <p className="text-xs text-muted-foreground">
             {t("settings.sections.sourceWatch.noProject", {

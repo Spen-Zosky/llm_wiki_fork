@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { open } from "@tauri-apps/plugin-dialog"
-import { Plus, FileText, RefreshCw, BookOpen, Trash2, Folder, ChevronRight, ChevronDown } from "lucide-react"
+import { Plus, FileText, RefreshCw, BookOpen, Trash2, Folder, ChevronRight, ChevronDown, Link2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
@@ -18,6 +18,7 @@ import {
   importSourceFiles,
   importSourceFolder,
 } from "@/lib/source-lifecycle"
+import { registerLinkedFolder } from "@/lib/linked-sources"
 
 const SOURCE_TREE_INITIAL_ROWS = 160
 const SOURCE_TREE_LOAD_BATCH = 160
@@ -166,6 +167,27 @@ export function SourcesView() {
     }
   }
 
+  // Phase 4: link an external folder in-place (no copy). Gated behind
+  // sourceWatchConfig.linkedSourcesEnabled (default OFF).
+  async function handleLinkFolder() {
+    if (!project) return
+    const selected = await open({
+      directory: true,
+      title: t("sources.linkFolder", "Link external folder (in-place)"),
+    })
+    if (!selected || typeof selected !== "string") return
+    setImporting(true)
+    try {
+      await registerLinkedFolder(project, selected, llmConfig, sourceWatchConfig)
+      await loadSources()
+    } catch (err) {
+      console.error("Failed to link folder:", err)
+      window.alert(`Failed to link folder: ${err}`)
+    } finally {
+      setImporting(false)
+    }
+  }
+
   async function handleOpenSource(node: FileNode) {
     try {
       const content = await readFile(node.path)
@@ -288,6 +310,12 @@ export function SourcesView() {
             <Plus className="mr-1 h-4 w-4" />
             {t("sources.importFolder", "Folder")}
           </Button>
+          {sourceWatchConfig.linkedSourcesEnabled && (
+            <Button size="sm" variant="outline" onClick={handleLinkFolder} disabled={importing}>
+              <Link2 className="mr-1 h-4 w-4" />
+              {t("sources.linkFolder", "Link")}
+            </Button>
+          )}
         </div>
       </div>
 

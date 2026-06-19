@@ -356,6 +356,7 @@ describe("project file sync", () => {
       excludeDirs: [],
       excludeGlobs: [],
       maxFileSizeMb: 100,
+      linkedSourcesEnabled: false,
     })
 
     expect(mocks.startProjectFileWatcher).toHaveBeenCalledWith(

@@ -5,9 +5,31 @@ const RAW_SOURCES_MARKER = "/raw/sources/"
 const MAX_SOURCE_SUMMARY_SLUG_LENGTH = 120
 const FALLBACK_SOURCE_PART = "source"
 
-export function sourceIdentityForPath(projectPath: string, sourcePath: string): string {
+/** An external, in-place (linked) source root — see `@/lib/linked-sources`. */
+export interface LinkedSourceRoot {
+  /** Normalized absolute path to the external file or folder. */
+  externalPath: string
+  /** Stable display label, used as the first identity segment. */
+  label: string
+}
+
+export function sourceIdentityForPath(
+  projectPath: string,
+  sourcePath: string,
+  linkedRoots?: readonly LinkedSourceRoot[],
+): string {
   const pp = normalizePath(projectPath).replace(/\/+$/, "")
   const sp = normalizePath(sourcePath)
+
+  // Linked (external, in-place) sources resolve to a stable `linked/<label>/...`
+  // identity BEFORE the raw/sources/ checks, so two external files sharing a
+  // basename in different roots never collide. Backward-compatible: when no
+  // linkedRoots are supplied (every existing caller), this is a no-op.
+  if (linkedRoots && linkedRoots.length > 0) {
+    const linked = linkedIdentityForPath(linkedRoots, sp)
+    if (linked) return linked
+  }
+
   const projectRawSourcesPrefix = `${pp}/${RAW_SOURCES_PREFIX}`
   const spKey = sp.toLowerCase()
   if (spKey.startsWith(projectRawSourcesPrefix.toLowerCase())) {
@@ -21,6 +43,25 @@ export function sourceIdentityForPath(projectPath: string, sourcePath: string): 
     return sp.slice(markerIndex + RAW_SOURCES_MARKER.length)
   }
   return getFileName(sp)
+}
+
+const LINKED_PREFIX = "linked/"
+
+/** Resolve a `linked/<label>[/<rel>]` identity when `sp` is inside a linked root. */
+function linkedIdentityForPath(roots: readonly LinkedSourceRoot[], sp: string): string | null {
+  const spKey = sp.toLowerCase()
+  for (const root of roots) {
+    const ext = normalizePath(root.externalPath).replace(/\/+$/, "")
+    if (!ext) continue
+    const extKey = ext.toLowerCase()
+    if (spKey === extKey) {
+      return `${LINKED_PREFIX}${root.label}`
+    }
+    if (spKey.startsWith(`${extKey}/`)) {
+      return `${LINKED_PREFIX}${root.label}/${sp.slice(ext.length + 1)}`
+    }
+  }
+  return null
 }
 
 export function sourceReferenceIdentity(sourceReference: string): string {

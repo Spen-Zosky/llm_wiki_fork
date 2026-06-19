@@ -500,7 +500,18 @@ async function autoIngestImpl(
   const sp = normalizePath(sourcePath)
   const activity = useActivityStore.getState()
   const fileName = getFileName(sp)
-  const sourceIdentity = sourceIdentityForPath(pp, sp)
+  // Phase 4: linked (external, in-place) sources resolve to a stable
+  // `linked/<label>/...` identity. Dynamic import avoids a static import cycle
+  // (linked-sources → ingest-queue → ingest). No-op when nothing is linked.
+  let linkedRoots: readonly { externalPath: string; label: string }[] | undefined
+  try {
+    const { loadLinkedSources, linkedRootsFor } = await import("@/lib/linked-sources")
+    const data = await loadLinkedSources(pp)
+    if (data.entries.length > 0) linkedRoots = linkedRootsFor(data)
+  } catch {
+    // registry missing / unreadable → treat as no linked sources
+  }
+  const sourceIdentity = sourceIdentityForPath(pp, sp, linkedRoots)
   const sourceSummarySlug = sourceSummarySlugFromIdentity(sourceIdentity)
   const sourceSummaryPath = `wiki/sources/${sourceSummarySlug}.md`
   console.log(`[ingest:diag] autoIngestImpl ENTRY for "${fileName}" (project="${pp}", source="${sp}")`)

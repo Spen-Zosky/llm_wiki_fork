@@ -50,6 +50,7 @@ export function normalizeSourceWatchConfig(config?: Partial<SourceWatchConfig> |
     excludeDirs: normalizeList(config?.excludeDirs ?? DEFAULT_SOURCE_WATCH_CONFIG.excludeDirs),
     excludeGlobs: normalizeList(config?.excludeGlobs ?? DEFAULT_SOURCE_WATCH_CONFIG.excludeGlobs),
     maxFileSizeMb: Math.max(1, Math.min(4096, config?.maxFileSizeMb ?? DEFAULT_SOURCE_WATCH_CONFIG.maxFileSizeMb)),
+    linkedSourcesEnabled: config?.linkedSourcesEnabled ?? DEFAULT_SOURCE_WATCH_CONFIG.linkedSourcesEnabled,
   }
 }
 

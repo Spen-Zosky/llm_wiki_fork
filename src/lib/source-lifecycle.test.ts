@@ -93,6 +93,7 @@ describe("source-lifecycle path helpers", () => {
         excludeDirs: ["drafts"],
         excludeGlobs: [],
         maxFileSizeMb: 100,
+        linkedSourcesEnabled: false,
       },
     )
 
@@ -167,6 +168,7 @@ describe("source-lifecycle path helpers", () => {
         excludeDirs: ["drafts"],
         excludeGlobs: [],
         maxFileSizeMb: 100,
+        linkedSourcesEnabled: false,
       },
     )
 

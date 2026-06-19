@@ -39,6 +39,43 @@ describe("source identity helpers", () => {
     expect(sourceSummarySlugFromIdentity("config.yaml")).toBe("config")
   })
 
+  it("resolves a linked external file under a linked root to linked/<label>/<rel>", () => {
+    const roots = [{ externalPath: "D:/repos/heuresys-advanced", label: "heuresys-advanced" }]
+    expect(
+      sourceIdentityForPath("/tmp/project", "D:/repos/heuresys-advanced/docs/readme.md", roots),
+    ).toBe("linked/heuresys-advanced/docs/readme.md")
+  })
+
+  it("resolves a linked single file to linked/<label>", () => {
+    const roots = [{ externalPath: "D:/notes/spec.md", label: "spec.md" }]
+    expect(sourceIdentityForPath("/tmp/project", "D:/notes/spec.md", roots)).toBe("linked/spec.md")
+  })
+
+  it("keeps linked identities collision-free for same-basename files in different roots", () => {
+    const roots = [
+      { externalPath: "D:/a", label: "a" },
+      { externalPath: "D:/b", label: "b" },
+    ]
+    const idA = sourceIdentityForPath("/tmp/project", "D:/a/config.yaml", roots)
+    const idB = sourceIdentityForPath("/tmp/project", "D:/b/config.yaml", roots)
+    expect(idA).toBe("linked/a/config.yaml")
+    expect(idB).toBe("linked/b/config.yaml")
+    expect(idA).not.toBe(idB)
+  })
+
+  it("round-trips a linked identity through sourceReferenceIdentity (delete-cascade match)", () => {
+    const roots = [{ externalPath: "D:/repos/proj", label: "proj" }]
+    const identity = sourceIdentityForPath("/tmp/project", "D:/repos/proj/src/x.ts", roots)
+    expect(sourceReferenceIdentity(identity)).toBe(identity)
+  })
+
+  it("ignores linkedRoots for paths that are not under any root (backward-compatible)", () => {
+    const roots = [{ externalPath: "D:/repos/proj", label: "proj" }]
+    expect(
+      sourceIdentityForPath("/tmp/project", "/tmp/project/raw/sources/a/b.md", roots),
+    ).toBe("a/b.md")
+  })
+
   it("escapes slug segments so delimiter-containing folders do not collide", () => {
     const slug = sourceSummarySlugFromIdentity("a--b/config.yaml")
 

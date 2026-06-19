@@ -53,5 +53,6 @@
     "draft-*",
     "*.private.*"
   ],
-  "maxFileSizeMb": 100
+  "maxFileSizeMb": 100,
+  "linkedSourcesEnabled": false
 }

@@ -213,6 +213,9 @@ interface SourceWatchConfig {
   excludeDirs: string[]
   excludeGlobs: string[]
   maxFileSizeMb: number
+  /** Enable `source_mode: linked` (in-place ingest of external repos/folders).
+   *  Default OFF — see `@/lib/linked-sources`. */
+  linkedSourcesEnabled: boolean
 }
 
 export type MineruModelVersion = "pipeline" | "vlm"

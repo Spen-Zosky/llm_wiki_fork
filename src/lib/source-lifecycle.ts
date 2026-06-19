@@ -17,6 +17,7 @@ import { getFileName, getFileStem, getRelativePath, normalizePath } from "@/lib/
 import {
   sourceIdentityForPath,
   sourceReferenceIdentity,
+  type LinkedSourceRoot,
 } from "@/lib/source-identity"
 import {
   parseFrontmatterArray,
@@ -237,10 +238,18 @@ export async function importSourceFolder(
   return allowedFiles
 }
 
+export interface DeleteSourceOptions {
+  fileAlreadyDeleted?: boolean
+  logReason?: string
+  /** Linked roots so external paths resolve to their `linked/...` identity
+   *  (needed for the wiki-page cascade to match). See `@/lib/linked-sources`. */
+  linkedRoots?: readonly LinkedSourceRoot[]
+}
+
 export async function deleteSourceFile(
   projectPath: string,
   sourcePath: string,
-  options: { fileAlreadyDeleted?: boolean; logReason?: string } = {},
+  options: DeleteSourceOptions = {},
 ): Promise<DeleteSourceResult> {
   const result = await deleteSourceFiles(projectPath, [sourcePath], options)
   return {
@@ -252,7 +261,7 @@ export async function deleteSourceFile(
 export async function deleteSourceFiles(
   projectPath: string,
   sourcePaths: string[],
-  options: { fileAlreadyDeleted?: boolean; logReason?: string } = {},
+  options: DeleteSourceOptions = {},
 ): Promise<DeleteSourcesResult> {
   const pp = normalizePath(projectPath)
   const sourceInfos = sourcePaths
@@ -261,7 +270,7 @@ export async function deleteSourceFiles(
       return {
         source,
         fileName: getFileName(source),
-        identity: sourceIdentityForPath(pp, source),
+        identity: sourceIdentityForPath(pp, source, options.linkedRoots),
       }
     })
     .filter((info) => info.fileName.length > 0)
