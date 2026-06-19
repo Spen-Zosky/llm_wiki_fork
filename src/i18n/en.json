@@ -11,6 +11,7 @@
     "graph": "Graph",
     "lint": "Lint",
     "review": "Review",
+    "export": "Export",
     "settings": "Settings",
     "switchProject": "Switch Project",
     "updateAvailable": "Update available",

@@ -214,6 +214,7 @@ pub fn run() {
             commands::fs::delete_file,
             commands::fs::find_related_wiki_pages,
             commands::fs::create_directory,
+            commands::fs::archive_snapshot,
             commands::fs::file_exists,
             commands::fs::get_file_modified_time,
             commands::fs::get_file_size,

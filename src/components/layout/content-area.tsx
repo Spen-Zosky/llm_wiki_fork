@@ -6,6 +6,7 @@ import { ReviewView } from "@/components/review/review-view"
 import { LintView } from "@/components/lint/lint-view"
 import { SearchView } from "@/components/search/search-view"
 import { GraphView } from "@/components/graph/graph-view"
+import { ExportView } from "@/components/export/export-view"
 import { PreviewPanel } from "./preview-panel"
 
 export function ContentArea() {
@@ -28,6 +29,8 @@ export function ContentArea() {
       return <SearchView />
     case "graph":
       return <GraphView />
+    case "export":
+      return <ExportView />
     default:
       return <PreviewPanel />
   }

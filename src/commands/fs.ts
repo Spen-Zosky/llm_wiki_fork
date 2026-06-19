@@ -53,6 +53,19 @@ export async function copyDirectory(
   return invoke<string[]>("copy_directory", { source, destination })
 }
 
+/**
+ * Snapshot project subtrees (`includes`, relative to projectPath) into a single
+ * `.zip` at `outPath`. Backs the archive cycle (Phase 5). Returns the number of
+ * files written into the archive.
+ */
+export async function createArchiveSnapshot(
+  projectPath: string,
+  outPath: string,
+  includes: string[],
+): Promise<number> {
+  return invoke<number>("archive_snapshot", { projectPath, outPath, includes })
+}
+
 export async function preprocessFile(path: string): Promise<string> {
   return invoke<string>("preprocess_file", { path })
 }

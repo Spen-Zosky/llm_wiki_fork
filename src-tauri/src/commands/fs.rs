@@ -1,8 +1,13 @@
 use std::fs;
 use std::io::Read as IoRead;
+use std::io::Write as IoWrite;
 use std::path::Path;
 use std::thread;
 use std::time::Duration;
+
+use walkdir::WalkDir;
+use zip::write::SimpleFileOptions;
+use zip::{CompressionMethod, ZipWriter};
 
 use calamine::{open_workbook_auto, Data, Reader};
 use office_oxide::Document;
@@ -1431,6 +1436,66 @@ pub async fn create_directory(path: String) -> Result<(), String> {
     })
     .await
     .map_err(|e| format!("create_directory blocking task join error: {e}"))?
+}
+
+/// Archive cycle (Phase 5): zip the given `includes` subtrees (relative to
+/// `project_path`) into a single `.zip` at `out_path`. Paths inside the archive
+/// are project-relative (forward slashes). Returns the file count written.
+#[tauri::command]
+pub async fn archive_snapshot(
+    project_path: String,
+    out_path: String,
+    includes: Vec<String>,
+) -> Result<u32, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        run_guarded("archive_snapshot", || {
+            require_absolute_path("archive_snapshot", &project_path)?;
+            require_absolute_path("archive_snapshot", &out_path)?;
+
+            if let Some(parent) = Path::new(&out_path).parent() {
+                fs::create_dir_all(parent)
+                    .map_err(|e| format!("Failed to create archive directory: {e}"))?;
+            }
+
+            let file = fs::File::create(&out_path)
+                .map_err(|e| format!("Failed to create archive '{}': {}", out_path, e))?;
+            let mut zip = ZipWriter::new(file);
+            let options = SimpleFileOptions::default().compression_method(CompressionMethod::Deflated);
+
+            let root = Path::new(&project_path);
+            let mut count: u32 = 0;
+            for inc in &includes {
+                let dir = root.join(inc);
+                if !dir.exists() {
+                    continue;
+                }
+                for entry in WalkDir::new(&dir).into_iter().filter_map(|e| e.ok()) {
+                    let path = entry.path();
+                    if !path.is_file() {
+                        continue;
+                    }
+                    let rel = match path.strip_prefix(root) {
+                        Ok(r) => r,
+                        Err(_) => continue,
+                    };
+                    let name = rel.to_string_lossy().replace('\\', "/");
+                    let bytes = match fs::read(path) {
+                        Ok(b) => b,
+                        Err(_) => continue,
+                    };
+                    zip.start_file(name, options)
+                        .map_err(|e| format!("zip start_file failed: {e}"))?;
+                    zip.write_all(&bytes)
+                        .map_err(|e| format!("zip write failed: {e}"))?;
+                    count += 1;
+                }
+            }
+            zip.finish().map_err(|e| format!("zip finish failed: {e}"))?;
+            Ok(count)
+        })
+    })
+    .await
+    .map_err(|e| format!("archive_snapshot blocking task join error: {e}"))?
 }
 
 /// Read any file as base64 + a guessed mime type. Used by the

@@ -11,6 +11,7 @@
     "graph": "关系图",
     "lint": "检查",
     "review": "待审阅",
+    "export": "导出",
     "settings": "设置",
     "switchProject": "切换项目",
     "updateAvailable": "有可用更新",

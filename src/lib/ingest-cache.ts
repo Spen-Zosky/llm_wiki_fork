@@ -138,6 +138,29 @@ export async function saveIngestCache(
 }
 
 /**
+ * Append an archival cycle to the cache history (capability #5). Additive —
+ * never touches `entries`, so it's safe alongside ingest.
+ */
+export async function appendArchivalCycle(
+  projectPath: string,
+  cycle: ArchivalCycle,
+): Promise<void> {
+  const cache = await loadCache(projectPath)
+  const archivalCycles = [...(cache.archivalCycles ?? []), cycle]
+  await saveCache(projectPath, {
+    ...cache,
+    archivalCycles,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+  })
+}
+
+/** List the recorded archival cycles (most-recent last). */
+export async function listArchivalCycles(projectPath: string): Promise<ArchivalCycle[]> {
+  const cache = await loadCache(projectPath)
+  return cache.archivalCycles ?? []
+}
+
+/**
  * Remove a source file entry from cache (e.g., when source is deleted).
  */
 export async function removeFromIngestCache(
