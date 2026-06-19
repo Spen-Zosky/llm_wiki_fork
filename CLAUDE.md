@@ -17,6 +17,7 @@ writer = the `handoff` skill):
 - **Durable rules / conventions** → this `CLAUDE.md`
 - **Path index** (generated) → `docs/kb/INDEX_PATHS.md` (+ `index_paths.yaml`)
 - **Full fusion plan** → `plans/fusion-wiki-factory.md`
+- **Technical references** → `docs/kb/dimensions-taxonomy.md` (7-axis spec) · `docs/kb/architecture-map.md` (llm_wiki internals + injection points + fusion rationale)
 
 Do NOT create other state/handoff/entry-point files.
 

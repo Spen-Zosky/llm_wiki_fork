@@ -1,15 +1,15 @@
 # index_paths.yaml - indice percorsi dominio llm_wiki_fork (CLI-owned SoT)
-# generato: 2026-06-19T00:12:10Z da docs/kb/tools/build_index.py
+# generato: 2026-06-19T00:20:12Z da docs/kb/tools/build_index.py
 meta:
-  generated_at: "2026-06-19T00:12:10Z"
-  total_files: 390
+  generated_at: "2026-06-19T00:20:12Z"
+  total_files: 394
   repo: 'D:/enzospenuso/Documents/GitHub/llm_wiki_fork'
   category_counts:
     ci: 2
     config: 20
     doc-canonical: 6
     extension-source: 8
-    handoff-state: 4
+    handoff-state: 8
     i18n: 3
     mcp-source: 7
     plan-doc: 2
@@ -20,7 +20,7 @@ meta:
     test: 119
     tool: 1
   status_counts:
-    live: 390
+    live: 394
 files:
   - rel: '.github/workflows/build.yml'
     category: ci
@@ -136,10 +136,22 @@ files:
   - rel: 'docs/kb/DEBT_REGISTER.md'
     category: handoff-state
     status: live
+  - rel: 'docs/kb/INDEX_PATHS.md'
+    category: handoff-state
+    status: live
   - rel: 'docs/kb/SOT_BACKLOG.md'
     category: handoff-state
     status: live
   - rel: 'docs/kb/SOT_STATE.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/architecture-map.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/dimensions-taxonomy.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/index_paths.yaml'
     category: handoff-state
     status: live
   - rel: 'src/i18n/en.json'

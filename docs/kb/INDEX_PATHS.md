@@ -1,6 +1,6 @@
 # INDEX_PATHS - Indice percorsi dominio llm_wiki_fork
 
-**Generato**: 2026-06-19T00:12:10Z - **Tool**: `docs/kb/tools/build_index.py` - **Totale file dominio**: **390**
+**Generato**: 2026-06-19T00:20:12Z - **Tool**: `docs/kb/tools/build_index.py` - **Totale file dominio**: **394**
 
 > Generato da `git ls-files` (rispetta `.gitignore`). Gemello machine-readable: `index_paths.yaml`.
 
@@ -12,7 +12,7 @@
 | config | 20 |
 | doc-canonical | 6 |
 | extension-source | 8 |
-| handoff-state | 4 |
+| handoff-state | 8 |
 | i18n | 3 |
 | mcp-source | 7 |
 | plan-doc | 2 |
@@ -22,13 +22,13 @@
 | script | 1 |
 | test | 119 |
 | tool | 1 |
-| **TOTALE** | **390** |
+| **TOTALE** | **394** |
 
 ## Conteggi per status
 
 | Status | File |
 |---|---|
-| live | 390 |
+| live | 394 |
 
 ## File per categoria
 
@@ -75,8 +75,12 @@
 ### handoff-state
 - `.handoff/STATE.md` - *live*
 - `docs/kb/DEBT_REGISTER.md` - *live*
+- `docs/kb/INDEX_PATHS.md` - *live*
 - `docs/kb/SOT_BACKLOG.md` - *live*
 - `docs/kb/SOT_STATE.md` - *live*
+- `docs/kb/architecture-map.md` - *live*
+- `docs/kb/dimensions-taxonomy.md` - *live*
+- `docs/kb/index_paths.yaml` - *live*
 ### i18n
 - `src/i18n/en.json` - *live*
 - `src/i18n/index.ts` - *live*
