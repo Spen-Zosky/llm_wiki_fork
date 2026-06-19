@@ -73,7 +73,10 @@ pub fn start_api_server(app: AppHandle) {
         };
 
         API_STATUS.store(1, Ordering::Relaxed);
-        eprintln!("[API Server] Listening on http://127.0.0.1:{PORT}{API_PREFIX}");
+        eprintln!(
+            "[API Server] Listening on http://{}:{PORT}{API_PREFIX}",
+            bind_address()
+        );
 
         for request in server.incoming_requests() {
             let method = request.method().clone();
@@ -104,13 +107,35 @@ pub fn start_api_server(app: AppHandle) {
     });
 }
 
+/// Inbound bind address. Loopback by default; override via `LLM_WIKI_API_BIND`
+/// (e.g. `0.0.0.0`) to expose on all interfaces (Phase 7 / Model B). Non-loopback
+/// exposure is a deliberate GO-LIVE step — pair it with TLS, auth, and a
+/// locked-down ingress. The default ships exposing nothing beyond loopback.
+fn bind_address() -> String {
+    std::env::var("LLM_WIKI_API_BIND")
+        .ok()
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
+        .unwrap_or_else(|| "127.0.0.1".to_string())
+}
+
+fn is_loopback_bind(host: &str) -> bool {
+    matches!(host, "127.0.0.1" | "localhost" | "::1")
+}
+
 fn bind_server_with_retry() -> Option<Server> {
+    let host = bind_address();
+    if !is_loopback_bind(&host) {
+        eprintln!(
+            "[API Server] WARNING: binding non-loopback address '{host}'. Ensure TLS + auth + restricted ingress are in place before exposing the vault filesystem."
+        );
+    }
     for attempt in 1..=MAX_BIND_RETRIES {
-        match Server::http(format!("127.0.0.1:{PORT}")) {
+        match Server::http(format!("{host}:{PORT}")) {
             Ok(server) => return Some(server),
             Err(err) => {
                 eprintln!(
-                    "[API Server] Failed to bind 127.0.0.1:{PORT} (attempt {attempt}/{MAX_BIND_RETRIES}): {err}"
+                    "[API Server] Failed to bind {host}:{PORT} (attempt {attempt}/{MAX_BIND_RETRIES}): {err}"
                 );
                 if attempt < MAX_BIND_RETRIES {
                     thread::sleep(Duration::from_secs(BIND_RETRY_DELAY_SECS));
@@ -224,6 +249,8 @@ fn handle_request(
             "enabled": api_enabled(app),
             "mcpEnabled": api_mcp_enabled(app),
             "allowUnauthenticated": api_allow_unauthenticated(app),
+            "writeEnabled": api_write_enabled(app),
+            "bindAddress": bind_address(),
         }));
     }
     if !path.starts_with(API_PREFIX) {
@@ -264,6 +291,15 @@ fn handle_request(
         (&Method::Get, ["projects", project_id, "graph"]) => handle_graph(app, project_id, query),
         (&Method::Post, ["projects", project_id, "sources", "rescan"]) => {
             handle_rescan(app, project_id)
+        }
+        (&Method::Post, ["projects", project_id, "files", "content"]) => {
+            handle_file_write(app, project_id, body)
+        }
+        (&Method::Post, ["projects", project_id, "files", "mkdir"]) => {
+            handle_file_mkdir(app, project_id, body)
+        }
+        (&Method::Post, ["projects", project_id, "files", "delete"]) => {
+            handle_file_delete(app, project_id, body)
         }
         (&Method::Post, ["projects", project_id, "chat"]) => {
             let _ = project_id;
@@ -485,6 +521,20 @@ fn api_mcp_enabled(app: &AppHandle) -> bool {
     parsed
         .get("apiConfig")
         .and_then(|v| v.get("mcpEnabled"))
+        .and_then(Value::as_bool)
+        .unwrap_or(false)
+}
+
+/// Whether mutating (write) endpoints are allowed. **Fail-closed** — default
+/// false, the opposite of `api_enabled` — so write access is never on by accident
+/// (Phase 7).
+fn api_write_enabled(app: &AppHandle) -> bool {
+    let Some(parsed) = load_app_state(app) else {
+        return false;
+    };
+    parsed
+        .get("apiConfig")
+        .and_then(|v| v.get("writeEnabled"))
         .and_then(Value::as_bool)
         .unwrap_or(false)
 }
@@ -762,6 +812,127 @@ fn handle_file_content(app: &AppHandle, project_id: &str, query: &str) -> ApiRes
     }
 }
 
+/// Gate every mutating endpoint (Phase 7). Fail-closed: write must be explicitly
+/// enabled, and is NEVER allowed together with anonymous access.
+fn write_guard(app: &AppHandle) -> Option<ApiResponse> {
+    if !api_write_enabled(app) {
+        return Some(err(403, "Write API is disabled (set apiConfig.writeEnabled = true)"));
+    }
+    if api_allow_unauthenticated(app) {
+        return Some(err(403, "Write API is refused while allowUnauthenticated is true"));
+    }
+    None
+}
+
+fn handle_file_write(app: &AppHandle, project_id: &str, body: &str) -> ApiResponse {
+    if let Some(resp) = write_guard(app) {
+        return resp;
+    }
+    let project = match resolve_project(app, project_id) {
+        Ok(project) => project,
+        Err(e) => return err(404, e),
+    };
+    let payload: Value = match serde_json::from_str(body) {
+        Ok(value) => value,
+        Err(e) => return err(400, format!("Invalid JSON body: {e}")),
+    };
+    let Some(rel) = payload.get("path").and_then(Value::as_str) else {
+        return err(400, "Missing 'path'");
+    };
+    let Some(content) = payload.get("content").and_then(Value::as_str) else {
+        return err(400, "Missing 'content'");
+    };
+    if !is_writable_project_rel(rel) {
+        return err(
+            403,
+            "Path is not writable via the API (only text files under wiki/ or raw/sources/)",
+        );
+    }
+    if content.len() as u64 > MAX_FILE_CONTENT_BYTES {
+        return err(413, "Content is too large");
+    }
+    let path = match safe_join(&project.path, rel) {
+        Ok(path) => path,
+        Err(e) => return err(400, e),
+    };
+    if let Some(parent) = path.parent() {
+        if let Err(e) = fs::create_dir_all(parent) {
+            return err(500, format!("Failed to create parent directory: {e}"));
+        }
+    }
+    // Atomic write: temp file beside the target, then rename over it.
+    let tmp = path.with_extension("api-tmp");
+    if let Err(e) = fs::write(&tmp, content) {
+        return err(500, format!("Write failed: {e}"));
+    }
+    if let Err(e) = fs::rename(&tmp, &path) {
+        let _ = fs::remove_file(&tmp);
+        return err(500, format!("Atomic rename failed: {e}"));
+    }
+    ok(json!({
+        "ok": true,
+        "projectId": project.id,
+        "path": rel,
+        "bytesWritten": content.len(),
+    }))
+}
+
+fn handle_file_mkdir(app: &AppHandle, project_id: &str, body: &str) -> ApiResponse {
+    if let Some(resp) = write_guard(app) {
+        return resp;
+    }
+    let project = match resolve_project(app, project_id) {
+        Ok(project) => project,
+        Err(e) => return err(404, e),
+    };
+    let payload: Value = match serde_json::from_str(body) {
+        Ok(value) => value,
+        Err(e) => return err(400, format!("Invalid JSON body: {e}")),
+    };
+    let Some(rel) = payload.get("path").and_then(Value::as_str) else {
+        return err(400, "Missing 'path'");
+    };
+    if !is_writable_dir_rel(rel) {
+        return err(403, "Directory is not writable via the API (only under wiki/ or raw/sources/)");
+    }
+    let path = match safe_join(&project.path, rel) {
+        Ok(path) => path,
+        Err(e) => return err(400, e),
+    };
+    if let Err(e) = fs::create_dir_all(&path) {
+        return err(500, format!("Failed to create directory: {e}"));
+    }
+    ok(json!({ "ok": true, "projectId": project.id, "path": rel }))
+}
+
+fn handle_file_delete(app: &AppHandle, project_id: &str, body: &str) -> ApiResponse {
+    if let Some(resp) = write_guard(app) {
+        return resp;
+    }
+    let project = match resolve_project(app, project_id) {
+        Ok(project) => project,
+        Err(e) => return err(404, e),
+    };
+    let payload: Value = match serde_json::from_str(body) {
+        Ok(value) => value,
+        Err(e) => return err(400, format!("Invalid JSON body: {e}")),
+    };
+    let Some(rel) = payload.get("path").and_then(Value::as_str) else {
+        return err(400, "Missing 'path'");
+    };
+    if !is_writable_project_rel(rel) {
+        return err(403, "Path is not deletable via the API");
+    }
+    let path = match safe_join(&project.path, rel) {
+        Ok(path) => path,
+        Err(e) => return err(400, e),
+    };
+    match fs::remove_file(&path) {
+        Ok(()) => ok(json!({ "ok": true, "projectId": project.id, "path": rel })),
+        Err(e) => err(500, format!("Delete failed: {e}")),
+    }
+}
+
 fn safe_join(project_path: &str, rel: &str) -> Result<PathBuf, String> {
     let root = PathBuf::from(project_path);
     let rel = rel.trim_start_matches('/');
@@ -839,6 +1010,32 @@ fn is_text_content_rel(rel: &str) -> bool {
             | "rtf"
             | "log"
     )
+}
+
+/// Stricter than `is_public_project_rel`: only text files under wiki/ or
+/// raw/sources/, never the schema/purpose anchors. Gates API writes/deletes.
+fn is_writable_project_rel(rel: &str) -> bool {
+    if !is_public_project_rel(rel) || !is_text_content_rel(rel) {
+        return false;
+    }
+    let lower = normalize_path(rel).trim_start_matches('/').to_lowercase();
+    if lower == "schema.md" || lower == "purpose.md" {
+        return false;
+    }
+    lower.starts_with("wiki/") || lower.starts_with("raw/sources/")
+}
+
+/// Directories the API may create — under wiki/ or raw/sources/ only.
+fn is_writable_dir_rel(rel: &str) -> bool {
+    let rel = normalize_path(rel).trim_start_matches('/').to_string();
+    if rel.is_empty() || rel.split('/').any(|part| part.is_empty() || part.starts_with('.')) {
+        return false;
+    }
+    let lower = rel.to_lowercase();
+    lower == "wiki"
+        || lower.starts_with("wiki/")
+        || lower == "raw/sources"
+        || lower.starts_with("raw/sources/")
 }
 
 #[derive(Serialize)]
@@ -1470,6 +1667,32 @@ mod tests {
         assert!(is_public_project_rel("Raw/Sources/source.md"));
         assert!(!is_public_project_rel(".llm-wiki/file-change-queue.json"));
         assert!(!is_public_project_rel("wiki/.draft.md"));
+    }
+
+    #[test]
+    fn writable_paths_are_stricter_than_public() {
+        // allowed: text under wiki/ or raw/sources/
+        assert!(is_writable_project_rel("wiki/concepts/x.md"));
+        assert!(is_writable_project_rel("raw/sources/note.txt"));
+        // schema/purpose anchors are public-readable but NOT writable
+        assert!(!is_writable_project_rel("schema.md"));
+        assert!(!is_writable_project_rel("purpose.md"));
+        // non-text and internal-state never writable
+        assert!(!is_writable_project_rel("wiki/image.png"));
+        assert!(!is_writable_project_rel(".llm-wiki/cache.json"));
+        // dirs
+        assert!(is_writable_dir_rel("wiki/concepts"));
+        assert!(is_writable_dir_rel("raw/sources/sub"));
+        assert!(!is_writable_dir_rel(".llm-wiki"));
+        assert!(!is_writable_dir_rel("secret"));
+    }
+
+    #[test]
+    fn bind_address_defaults_to_loopback() {
+        // Note: env-independent default — LLM_WIKI_API_BIND is unset in tests.
+        assert!(is_loopback_bind("127.0.0.1"));
+        assert!(is_loopback_bind("localhost"));
+        assert!(!is_loopback_bind("0.0.0.0"));
     }
 
     #[test]
