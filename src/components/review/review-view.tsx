@@ -14,11 +14,12 @@ import {
 import { Button } from "@/components/ui/button"
 import { useReviewStore, type ReviewItem } from "@/stores/review-store"
 import { useWikiStore } from "@/stores/wiki-store"
-import { writeFile, readFile, listDirectory, deleteFile } from "@/commands/fs"
+import { writeFile, readFile, listDirectory, deleteFile, createDirectory } from "@/commands/fs"
 import { normalizePath } from "@/lib/path-utils"
 import { hasConfiguredDeepResearchSources } from "@/lib/web-search"
 import { makeQueryFileName } from "@/lib/wiki-filename"
 import { createReviewPageDrafts } from "@/lib/review-create-page"
+import { applyArbitration, type ArbitrationPath } from "@/lib/arbitration"
 import { cleanAssistantContentForWikiSave, titleFromCleanAssistantContent } from "@/lib/chat-save-to-wiki"
 import { useTranslation } from "react-i18next"
 
@@ -139,6 +140,30 @@ export function ReviewView() {
       } catch (err) {
         console.error("Failed to delete:", err)
         resolveItem(id, "Delete failed")
+      }
+    } else if (action.startsWith("arbitrate:") && project && item?.conflict) {
+      // Phase 3 arbitration: apply the chosen resolution path to the page and
+      // write an immutable arbitration record. MUST precede the create-page
+      // branch below, which would otherwise hijack an "arbitrate:*" action.
+      const path = action.slice("arbitrate:".length) as ArbitrationPath
+      try {
+        const pagePath = `${pp}/${item.conflict.pagePath}`
+        const current = await readFile(pagePath)
+        const { newPageContent, record, recordPath } = applyArbitration(item.conflict, path, {
+          pageContent: current,
+          today: () => makeQueryFileName("arbitration").date,
+        })
+        await createDirectory(`${pp}/wiki/_arbitrations`)
+        await writeFile(`${pp}/${recordPath}`, record)
+        await writeFile(pagePath, newPageContent)
+        const tree = await listDirectory(pp)
+        setFileTree(tree)
+        useWikiStore.getState().openFileInPreview(pagePath, newPageContent)
+        useWikiStore.getState().bumpDataVersion()
+        resolveItem(id, `Arbitrated (path ${path})`)
+      } catch (err) {
+        console.error("Arbitration failed:", err)
+        resolveItem(id, "Arbitration failed")
       }
     } else if (actionLooksLikeResearch(action) && project) {
       // Actions with "research" trigger deep research, not just page creation

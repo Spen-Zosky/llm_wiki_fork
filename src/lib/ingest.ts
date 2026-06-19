@@ -25,6 +25,12 @@ import { parseSources, writeSources } from "@/lib/sources-merge"
 import { checkIngestCache, saveIngestCache } from "@/lib/ingest-cache"
 import { sanitizeIngestedFileContent } from "@/lib/ingest-sanitize"
 import { mergePageContent, type MergeFn } from "@/lib/page-merge"
+import {
+  detectConflict,
+  conflictToReviewItem,
+  type ConflictJudge,
+  type ConflictJudgeResult,
+} from "@/lib/arbitration"
 import { withProjectLock } from "@/lib/project-mutex"
 import { parseFrontmatter } from "@/lib/frontmatter"
 import { stampFreshness, DIMENSION_AXES } from "@/lib/dimensions"
@@ -949,6 +955,7 @@ async function autoIngestImpl(
   const writtenPaths = writeResult.writtenPaths
   const writeWarnings = writeResult.warnings
   const hardFailures = writeResult.hardFailures
+  const conflictItems = writeResult.conflictItems
 
   const aggregateRepairPaths = aggregatePathsNeedingRepair(writtenPaths, writeWarnings)
   const repairableAggregatePaths = aggregateRepairPaths.filter((path) =>
@@ -1101,6 +1108,7 @@ async function autoIngestImpl(
   const reviewItems = [
     ...parseReviewBlocks(generation, sp),
     ...parseReviewBlocks(reviewSuggestionOutput, sp),
+    ...conflictItems, // Phase 3: structured contradictions detected during merge
   ]
   if (reviewItems.length > 0) {
     useReviewStore.getState().addItems(reviewItems)
@@ -1519,10 +1527,17 @@ async function writeFileBlocks(
   sourceFileName: string,
   sourceSummaryPath?: string,
   signal?: AbortSignal,
-): Promise<{ writtenPaths: string[]; warnings: string[]; hardFailures: string[] }> {
+): Promise<{
+  writtenPaths: string[]
+  warnings: string[]
+  hardFailures: string[]
+  conflictItems: Omit<ReviewItem, "id" | "resolved" | "createdAt">[]
+}> {
   const { blocks, warnings: parseWarnings } = parseFileBlocks(text)
   const warnings = [...parseWarnings]
   const writtenPaths: string[] = []
+  // Structured contradictions detected post-merge (Phase 3 arbitration).
+  const conflictItems: Omit<ReviewItem, "id" | "resolved" | "createdAt">[] = []
   // "Hard failures" = blocks we INTENDED to write but the FS rejected
   // (disk full, permission, OS-level errors). Distinct from soft drops
   // (language mismatch, parse warnings, path-traversal rejections):
@@ -1533,6 +1548,7 @@ async function writeFileBlocks(
   // instead of replaying the partial result forever.
   const hardFailures: string[] = []
   const projectSchemaRouting = await loadProjectWikiSchemaRouting(projectPath)
+  const conflictJudge = buildConflictJudge(llmConfig)
 
   const targetLang = useWikiStore.getState().outputLanguage
   const today = currentWikiDate()
@@ -1654,6 +1670,24 @@ async function writeFileBlocks(
           },
         )
         await writeFile(fullPath, toWrite)
+
+        // Phase 3 arbitration: when a re-ingest actually changed an existing
+        // content page, check the merged result for a genuine contradiction.
+        // Detection never blocks the write — any failure is swallowed.
+        if (existing && toWrite !== existing) {
+          try {
+            const conflict = await detectConflict(
+              existing,
+              content,
+              toWrite,
+              { pagePath: relativePath, sourceFileName, signal },
+              conflictJudge,
+            )
+            if (conflict) conflictItems.push(conflictToReviewItem(conflict))
+          } catch {
+            // ignore — arbitration detection is best-effort
+          }
+        }
       }
       writtenPaths.push(relativePath)
     } catch (err) {
@@ -1664,7 +1698,7 @@ async function writeFileBlocks(
     }
   }
 
-  return { writtenPaths, warnings, hardFailures }
+  return { writtenPaths, warnings, hardFailures, conflictItems }
 }
 
 const REVIEW_BLOCK_REGEX = /---REVIEW:\s*(\w[\w-]*)\s*\|\s*(.+?)\s*---\n([\s\S]*?)---END REVIEW---/g
@@ -2634,6 +2668,103 @@ export function buildPageMergeSystemPrompt(): string {
     "- The caller will overwrite `sources`/`tags`/`related`/`updated` with",
     "  deterministic values — your job is the body and any other fields",
   ].join("\n")
+}
+
+/**
+ * Build a ConflictJudge for a given LLM config (Phase 3 arbitration). Asks the
+ * model whether a just-merged page holds a genuine contradiction and returns
+ * the parsed verdict; `arbitration.ts` owns the deterministic guards/record.
+ */
+function buildConflictJudge(llmConfig: LlmConfig): ConflictJudge {
+  return async (mergedContent, _sourceFileName, signal) => {
+    const userMessage = [
+      "## Merged wiki page",
+      "",
+      mergedContent,
+      "",
+      "---",
+      "",
+      "Analyze the merged page above. Respond with the JSON verdict only.",
+    ].join("\n")
+
+    let result = ""
+    let streamError: Error | null = null
+    await new Promise<void>((resolve) => {
+      streamChat(
+        llmConfig,
+        [
+          { role: "system", content: buildConflictDetectionSystemPrompt() },
+          { role: "user", content: userMessage },
+        ],
+        {
+          onToken: (token) => {
+            result += token
+          },
+          onDone: () => resolve(),
+          onError: (err) => {
+            streamError = err
+            resolve()
+          },
+        },
+        signal,
+        { temperature: 0 },
+      ).catch((err) => {
+        streamError = err instanceof Error ? err : new Error(String(err))
+        resolve()
+      })
+    })
+    if (streamError) throw streamError
+    return parseConflictJudgeResult(result)
+  }
+}
+
+export function buildConflictDetectionSystemPrompt(): string {
+  return [
+    "You are a contradiction detector for a knowledge wiki.",
+    "You are given a single wiki page that was just merged from multiple sources.",
+    "Decide whether it contains TWO OR MORE genuinely CONTRADICTORY claims about the SAME subject and attribute — claims that cannot both be true.",
+    "",
+    "Be conservative. The following are NOT contradictions — report none:",
+    "- claims about different subjects, entities, time periods, or scopes",
+    "- a general principle and a specific implementation of it",
+    "- complementary facts, or different aspects of the same thing",
+    "- claims already attributed to different sources that simply coexist without conflict",
+    "When in doubt, report no contradiction.",
+    "",
+    "Respond with a SINGLE JSON object and nothing else.",
+    'No contradiction: {"contradiction": false}',
+    'Real contradiction: {"contradiction": true, "summary": "<short title>", "claims": [{"source": "<source filename>", "text": "<verbatim claim>"}, {"source": "<source filename>", "text": "<verbatim claim>"}]}',
+  ].join("\n")
+}
+
+/** Parse the conflict judge's JSON verdict; returns null on any malformed / negative result. */
+function parseConflictJudgeResult(text: string): ConflictJudgeResult | null {
+  const start = text.indexOf("{")
+  const end = text.lastIndexOf("}")
+  if (start < 0 || end <= start) return null
+  let parsed: unknown
+  try {
+    parsed = JSON.parse(text.slice(start, end + 1))
+  } catch {
+    return null
+  }
+  if (!parsed || typeof parsed !== "object") return null
+  const obj = parsed as Record<string, unknown>
+  if (obj.contradiction !== true || !Array.isArray(obj.claims)) return null
+
+  const claims = obj.claims
+    .map((entry) => {
+      if (!entry || typeof entry !== "object") return null
+      const candidate = entry as Record<string, unknown>
+      const claimText = typeof candidate.text === "string" ? candidate.text : ""
+      if (!claimText.trim()) return null
+      return { source: typeof candidate.source === "string" ? candidate.source : "", text: claimText }
+    })
+    .filter((claim): claim is { source: string; text: string } => claim !== null)
+
+  if (claims.length < 2) return null
+  const summary = typeof obj.summary === "string" ? obj.summary : undefined
+  return { claims, summary }
 }
 
 /**

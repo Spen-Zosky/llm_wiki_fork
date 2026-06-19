@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { normalizeReviewTitle } from "@/lib/review-utils"
+import type { Conflict } from "@/lib/arbitration"
 
 export interface ReviewOption {
   label: string
@@ -18,6 +19,13 @@ export interface ReviewItem {
   resolved: boolean
   resolvedAction?: string
   createdAt: number
+  /**
+   * Structured conflict payload for `type: "contradiction"` items produced by
+   * the arbitration detector — carries the claims + sources so the review view
+   * can apply a resolution path (see `@/lib/arbitration`). Optional and
+   * JSON-serializable, so it persists with the rest of the review queue.
+   */
+  conflict?: Conflict
 }
 
 interface ReviewState {
