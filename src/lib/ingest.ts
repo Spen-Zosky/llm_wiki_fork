@@ -27,7 +27,7 @@ import { sanitizeIngestedFileContent } from "@/lib/ingest-sanitize"
 import { mergePageContent, type MergeFn } from "@/lib/page-merge"
 import { withProjectLock } from "@/lib/project-mutex"
 import { parseFrontmatter } from "@/lib/frontmatter"
-import { stampFreshness } from "@/lib/dimensions"
+import { stampFreshness, DIMENSION_AXES } from "@/lib/dimensions"
 import { makeQuerySlug } from "@/lib/wiki-filename"
 import type { FileNode } from "@/types/wiki"
 import {
@@ -1895,6 +1895,17 @@ export function buildGenerationPrompt(
     "- Derive filenames from the page title in the mandatory output language, but short proper nouns and technical identifiers take precedence: preserve names such as OpenAI, GPT-5, Transformer, CLIP, ImageNet, PyTorch, CUDA, GitHub, arXiv, React, LanceDB, AnyTXT, MinerU, model names, dataset names, tool names, and code identifiers in their standard original form. Do not put raw URLs, citation strings, or full paper titles directly into file paths; convert surrounding descriptive prose to a safe readable title. For Chinese/Japanese/Korean prose titles, keep readable CJK characters in the filename instead of translating the slug to English.",
     "- Follow the analysis recommendations on what to emphasize",
     "- If the analysis found connections to existing pages, add cross-references",
+    "",
+    "## Optional dimensional axes (frontmatter)",
+    "",
+    "Beyond the required fields, classify each page along these OPTIONAL single-value axes when the content makes the value unambiguous. Omit an axis rather than guess — an absent axis means \"unspecified\", which is always safe.",
+    `  • facet     — ${DIMENSION_AXES.facet.join(" | ")}`,
+    `  • layer     — ${DIMENSION_AXES.layer.join(" | ")} (plus any extra values defined in the project schema's "## Dimensions" section)`,
+    `  • scope     — ${DIMENSION_AXES.scope.join(" | ")}`,
+    `  • authority — ${DIMENSION_AXES.authority.join(" | ")}`,
+    `  • provenance-confidence — ${DIMENSION_AXES["provenance-confidence"].join(" | ")}`,
+    `  • temporal-status — ${DIMENSION_AXES["temporal-status"].join(" | ")} (when "superseded", also add \`superseded-by: <slug>\`)`,
+    "Do NOT set `freshness` — the engine derives it automatically from `updated`.",
     "",
     "## Review block types",
     "",

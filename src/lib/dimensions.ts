@@ -68,6 +68,15 @@ export interface DimensionFinding {
 /** Freshness values that can be auto-derived (`evergreen` is explicit-only). */
 export type DerivedFreshness = "live" | "recent" | "aged" | "stale-info"
 
+export interface ValidateDimensionsOptions {
+  /**
+   * Per-vault `layer` value extensions (from a `## Dimensions` section in
+   * `schema.md`), additive to the engine defaults. Only the `layer` axis is
+   * extendable — the six fixed axes stay comparable cross-vault.
+   */
+  extraLayers?: readonly string[]
+}
+
 /**
  * Validate the dimensional axes present in a page's frontmatter. Returns one
  * finding per problem; an empty array when every present axis is valid (or
@@ -75,9 +84,12 @@ export type DerivedFreshness = "live" | "recent" | "aged" | "stale-info"
  */
 export function validateDimensions(
   frontmatter: Record<string, FrontmatterValue> | null | undefined,
+  options?: ValidateDimensionsOptions,
 ): DimensionFinding[] {
   const findings: DimensionFinding[] = []
   if (!frontmatter) return findings
+
+  const extraLayers = options?.extraLayers ?? []
 
   for (const axis of AXIS_KEYS) {
     const raw = frontmatter[axis]
@@ -92,12 +104,17 @@ export function validateDimensions(
       continue
     }
 
-    if (!DIMENSION_AXES[axis].includes(raw)) {
+    const allowed =
+      axis === "layer" && extraLayers.length > 0
+        ? [...DIMENSION_AXES.layer, ...extraLayers]
+        : DIMENSION_AXES[axis]
+
+    if (!allowed.includes(raw)) {
       findings.push({
         axis,
         severity: "error",
         value: raw,
-        detail: `Invalid "${axis}" value "${raw}". Allowed: ${DIMENSION_AXES[axis].join(", ")}.`,
+        detail: `Invalid "${axis}" value "${raw}". Allowed: ${allowed.join(", ")}.`,
       })
     }
   }

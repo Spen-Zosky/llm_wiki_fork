@@ -53,6 +53,16 @@ fn create_project_impl(name: String, path: String) -> Result<WikiProject, String
 | comparison | wiki/comparisons/ | Side-by-side analysis of related entities |
 | synthesis | wiki/synthesis/ | Cross-cutting summaries and conclusions |
 
+## Dimensions
+
+Optional per-vault extensions to the dimensional `layer` axis (additive to the
+engine defaults — the other six axes are fixed cross-vault). Add one table row
+per axis; values are comma-separated. Example (uncomment and edit to use):
+
+| Axis | Values |
+| ---- | ------ |
+<!-- | layer | marketing, sales, legal | -->
+
 ## Naming Conventions
 
 - Files: `kebab-case.md`

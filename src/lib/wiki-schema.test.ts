@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest"
 import {
+  parseWikiSchemaDimensions,
   parseWikiSchemaRouting,
   validateWikiPageRouting,
 } from "./wiki-schema"
@@ -52,6 +53,39 @@ describe("parseWikiSchemaRouting", () => {
     expect(routing.typeDirs).toEqual({
       concept: "wiki/concepts",
     })
+  })
+})
+
+describe("parseWikiSchemaDimensions", () => {
+  it("extracts axis value extensions from the Dimensions table", () => {
+    const md = [
+      "# Wiki Schema",
+      "",
+      "## Dimensions",
+      "",
+      "| Axis | Values |",
+      "| ---- | ------ |",
+      "| layer | marketing, sales, legal |",
+      "",
+      "## Page Types",
+      "",
+      "| Type | Directory | Purpose |",
+      "| ---- | --------- | ------- |",
+      "| concept | wiki/concepts/ | Ideas |",
+    ].join("\n")
+
+    expect(parseWikiSchemaDimensions(md).axes).toEqual({
+      layer: ["marketing", "sales", "legal"],
+    })
+  })
+
+  it("returns empty axes when there is no Dimensions section", () => {
+    expect(parseWikiSchemaDimensions("# Wiki Schema\n\n## Page Types\n").axes).toEqual({})
+  })
+
+  it("ignores the header and separator rows", () => {
+    const md = "## Dimensions\n\n| Axis | Values |\n| --- | --- |\n| layer | a, b |\n"
+    expect(parseWikiSchemaDimensions(md).axes).toEqual({ layer: ["a", "b"] })
   })
 })
 

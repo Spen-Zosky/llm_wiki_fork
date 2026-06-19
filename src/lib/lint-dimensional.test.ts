@@ -69,4 +69,27 @@ describe("lint — runDimensionalLint", () => {
     mockReadFile.mockResolvedValue("---\nfacet: nonsense\n---\nx")
     expect(await runDimensionalLint("/p")).toEqual([])
   })
+
+  it("honors per-vault layer extensions declared in schema.md", async () => {
+    mockListDirectory.mockResolvedValue([md("a.md")])
+    mockReadFile.mockImplementation(async (p: string) =>
+      p === "/p/schema.md"
+        ? "## Dimensions\n\n| Axis | Values |\n| --- | --- |\n| layer | marketing |\n"
+        : "---\ntype: concept\nlayer: marketing\n---\nbody",
+    )
+    expect(await runDimensionalLint("/p")).toEqual([])
+  })
+
+  it("still flags a layer value that is neither a default nor a declared extension", async () => {
+    mockListDirectory.mockResolvedValue([md("a.md")])
+    mockReadFile.mockImplementation(async (p: string) =>
+      p === "/p/schema.md"
+        ? "## Dimensions\n\n| Axis | Values |\n| --- | --- |\n| layer | marketing |\n"
+        : "---\ntype: concept\nlayer: bogus\n---\nbody",
+    )
+    const results = await runDimensionalLint("/p")
+    expect(results).toHaveLength(1)
+    expect(results[0]).toMatchObject({ type: "dimensional", severity: "warning" })
+    expect(results[0].detail).toContain("layer")
+  })
 })

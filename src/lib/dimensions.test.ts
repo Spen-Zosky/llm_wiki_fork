@@ -48,6 +48,23 @@ describe("dimensions — validateDimensions", () => {
     })
     expect(findings).toEqual([])
   })
+
+  it("accepts a layer value supplied via extraLayers (per-vault extension)", () => {
+    expect(validateDimensions({ layer: "marketing" }, { extraLayers: ["marketing"] })).toEqual([])
+  })
+
+  it("flags a layer value that is neither a default nor an extension", () => {
+    const findings = validateDimensions({ layer: "bogus" }, { extraLayers: ["marketing"] })
+    expect(findings).toHaveLength(1)
+    expect(findings[0]).toMatchObject({ axis: "layer", severity: "error", value: "bogus" })
+    expect(findings[0].detail).toContain("marketing") // extension listed in "Allowed:"
+  })
+
+  it("does not let extraLayers loosen any of the six fixed axes", () => {
+    const findings = validateDimensions({ facet: "marketing" }, { extraLayers: ["marketing"] })
+    expect(findings).toHaveLength(1)
+    expect(findings[0]).toMatchObject({ axis: "facet", severity: "error" })
+  })
 })
 
 describe("dimensions — deriveFreshness", () => {

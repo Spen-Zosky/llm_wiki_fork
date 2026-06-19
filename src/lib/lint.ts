@@ -7,6 +7,7 @@ import { getFileName, getRelativePath, normalizePath } from "@/lib/path-utils"
 import { buildLanguageDirective } from "@/lib/output-language"
 import { parseFrontmatter } from "@/lib/frontmatter"
 import { validateDimensions } from "@/lib/dimensions"
+import { loadProjectWikiSchemaDimensions } from "@/lib/wiki-schema"
 
 export interface LintResult {
   type: "orphan" | "broken-link" | "no-outlinks" | "semantic" | "dimensional"
@@ -321,6 +322,10 @@ export async function runDimensionalLint(projectPath: string): Promise<LintResul
     (f) => f.name !== "index.md" && f.name !== "log.md",
   )
 
+  // Per-vault `layer` extensions declared in schema.md (## Dimensions).
+  const schemaDimensions = await loadProjectWikiSchemaDimensions(projectPath)
+  const extraLayers = schemaDimensions?.axes.layer ?? []
+
   const results: LintResult[] = []
   for (const f of contentFiles) {
     let content: string
@@ -331,7 +336,7 @@ export async function runDimensionalLint(projectPath: string): Promise<LintResul
     }
     const shortName = getRelativePath(f.path, wikiRoot)
     const { frontmatter } = parseFrontmatter(content)
-    for (const finding of validateDimensions(frontmatter)) {
+    for (const finding of validateDimensions(frontmatter, { extraLayers })) {
       results.push({
         type: "dimensional",
         severity: finding.severity === "info" ? "info" : "warning",
