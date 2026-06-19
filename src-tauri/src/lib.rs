@@ -215,6 +215,7 @@ pub fn run() {
             commands::fs::find_related_wiki_pages,
             commands::fs::create_directory,
             commands::fs::archive_snapshot,
+            commands::fs::graphify_run,
             commands::fs::file_exists,
             commands::fs::get_file_modified_time,
             commands::fs::get_file_size,

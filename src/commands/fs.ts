@@ -66,6 +66,22 @@ export async function createArchiveSnapshot(
   return invoke<number>("archive_snapshot", { projectPath, outPath, includes })
 }
 
+export interface GraphifyRunResult {
+  success: boolean
+  graphPath: string
+  stdout: string
+  stderr: string
+}
+
+/**
+ * Run the external `graphify` CLI (`update <inputDir>`) with cwd = projectPath,
+ * writing `graphify-out/graph.json` (Phase 6, code-AST layer; the full semantic
+ * graph is produced by the `/graphify` skill). Returns the process result.
+ */
+export async function runGraphify(projectPath: string, inputDir: string): Promise<GraphifyRunResult> {
+  return invoke<GraphifyRunResult>("graphify_run", { projectPath, inputDir })
+}
+
 export async function preprocessFile(path: string): Promise<string> {
   return invoke<string>("preprocess_file", { path })
 }

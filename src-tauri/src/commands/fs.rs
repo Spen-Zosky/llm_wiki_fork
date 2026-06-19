@@ -1498,6 +1498,54 @@ pub async fn archive_snapshot(
     .map_err(|e| format!("archive_snapshot blocking task join error: {e}"))?
 }
 
+/// Result of a `graphify` CLI invocation (Phase 6).
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct GraphifyRunResult {
+    pub success: bool,
+    pub graph_path: String,
+    pub stdout: String,
+    pub stderr: String,
+}
+
+/// Run the external `graphify` CLI `update <input_dir>` with cwd = project_path,
+/// producing `graphify-out/graph.json`. graphify is a separately-installed tool
+/// we shell out to (no bundling), located via the shared CLI resolver.
+#[tauri::command]
+pub async fn graphify_run(
+    project_path: String,
+    input_dir: String,
+) -> Result<GraphifyRunResult, String> {
+    require_absolute_path("graphify_run", &project_path)?;
+
+    let bin = crate::commands::cli_resolver::find_cli_command(
+        "graphify",
+        &["graphify.exe", "graphify.cmd", "graphify"],
+    )
+    .await?;
+
+    let target = Path::new(&project_path).join(&input_dir);
+    let mut cmd = tokio::process::Command::new(&bin);
+    cmd.arg("update")
+        .arg(target.to_string_lossy().to_string())
+        .current_dir(&project_path);
+    if let Some(path_env) = crate::commands::cli_resolver::child_path_env().await {
+        cmd.env("PATH", path_env);
+    }
+
+    let output = cmd
+        .output()
+        .await
+        .map_err(|e| format!("Failed to run graphify: {e}"))?;
+
+    Ok(GraphifyRunResult {
+        success: output.status.success(),
+        graph_path: "graphify-out/graph.json".to_string(),
+        stdout: String::from_utf8_lossy(&output.stdout).to_string(),
+        stderr: String::from_utf8_lossy(&output.stderr).to_string(),
+    })
+}
+
 /// Read any file as base64 + a guessed mime type. Used by the
 /// vision-caption pipeline to slurp extracted image bytes off disk
 /// without round-tripping them through the JS string-as-UTF8 path
