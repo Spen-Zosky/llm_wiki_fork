@@ -21,8 +21,9 @@ src-tauri/gen/
 .env.local
 .env.*.local
 
-# Internal docs (not shipped)
-docs/
+# Internal docs (not shipped) — except the cloned heuresys SoT/handoff machinery
+docs/*
+!docs/kb/
 AGENTS.md
 
 # Benchmark and test data (local only)

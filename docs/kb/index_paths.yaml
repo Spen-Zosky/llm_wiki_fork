@@ -1,0 +1,1194 @@
+# index_paths.yaml - indice percorsi dominio llm_wiki_fork (CLI-owned SoT)
+# generato: 2026-06-19T00:12:10Z da docs/kb/tools/build_index.py
+meta:
+  generated_at: "2026-06-19T00:12:10Z"
+  total_files: 390
+  repo: 'D:/enzospenuso/Documents/GitHub/llm_wiki_fork'
+  category_counts:
+    ci: 2
+    config: 20
+    doc-canonical: 6
+    extension-source: 8
+    handoff-state: 4
+    i18n: 3
+    mcp-source: 7
+    plan-doc: 2
+    react-source: 179
+    rust-config: 19
+    rust-source: 19
+    script: 1
+    test: 119
+    tool: 1
+  status_counts:
+    live: 390
+files:
+  - rel: '.github/workflows/build.yml'
+    category: ci
+    status: live
+  - rel: '.github/workflows/ci.yml'
+    category: ci
+    status: live
+  - rel: '.gitignore'
+    category: config
+    status: live
+  - rel: 'LICENSE'
+    category: config
+    status: live
+  - rel: 'assets/1-deepresearch.jpg'
+    category: config
+    status: live
+  - rel: 'assets/2-ai_chat.jpg'
+    category: config
+    status: live
+  - rel: 'assets/3-knowledge_graph.jpg'
+    category: config
+    status: live
+  - rel: 'assets/4-chrome_extension_webclipper.jpg'
+    category: config
+    status: live
+  - rel: 'assets/5-obsidian_compatibility.jpg'
+    category: config
+    status: live
+  - rel: 'assets/kg_community.jpg'
+    category: config
+    status: live
+  - rel: 'assets/kg_insights.jpg'
+    category: config
+    status: live
+  - rel: 'assets/llm_wiki_arch.jpg'
+    category: config
+    status: live
+  - rel: 'assets/overview.jpg'
+    category: config
+    status: live
+  - rel: 'components.json'
+    category: config
+    status: live
+  - rel: 'index.html'
+    category: config
+    status: live
+  - rel: 'logo.jpg'
+    category: config
+    status: live
+  - rel: 'package-lock.json'
+    category: config
+    status: live
+  - rel: 'package.json'
+    category: config
+    status: live
+  - rel: 'tsconfig.app.json'
+    category: config
+    status: live
+  - rel: 'tsconfig.json'
+    category: config
+    status: live
+  - rel: 'tsconfig.node.json'
+    category: config
+    status: live
+  - rel: 'vite.config.ts'
+    category: config
+    status: live
+  - rel: 'CLAUDE.md'
+    category: doc-canonical
+    status: live
+  - rel: 'README.md'
+    category: doc-canonical
+    status: live
+  - rel: 'README_CN.md'
+    category: doc-canonical
+    status: live
+  - rel: 'README_JA.md'
+    category: doc-canonical
+    status: live
+  - rel: 'README_KO.md'
+    category: doc-canonical
+    status: live
+  - rel: 'llm-wiki.md'
+    category: doc-canonical
+    status: live
+  - rel: 'extension/Readability.js'
+    category: extension-source
+    status: live
+  - rel: 'extension/Turndown.js'
+    category: extension-source
+    status: live
+  - rel: 'extension/icon128.png'
+    category: extension-source
+    status: live
+  - rel: 'extension/icon16.png'
+    category: extension-source
+    status: live
+  - rel: 'extension/icon48.png'
+    category: extension-source
+    status: live
+  - rel: 'extension/manifest.json'
+    category: extension-source
+    status: live
+  - rel: 'extension/popup.html'
+    category: extension-source
+    status: live
+  - rel: 'extension/popup.js'
+    category: extension-source
+    status: live
+  - rel: '.handoff/STATE.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/DEBT_REGISTER.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/SOT_BACKLOG.md'
+    category: handoff-state
+    status: live
+  - rel: 'docs/kb/SOT_STATE.md'
+    category: handoff-state
+    status: live
+  - rel: 'src/i18n/en.json'
+    category: i18n
+    status: live
+  - rel: 'src/i18n/index.ts'
+    category: i18n
+    status: live
+  - rel: 'src/i18n/zh.json'
+    category: i18n
+    status: live
+  - rel: 'mcp-server/README.md'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/package-lock.json'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/package.json'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/src/api-client.ts'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/src/index.ts'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/src/version.ts'
+    category: mcp-source
+    status: live
+  - rel: 'mcp-server/tsconfig.json'
+    category: mcp-source
+    status: live
+  - rel: 'plans/fusion-wiki-factory.md'
+    category: plan-doc
+    status: live
+  - rel: 'plans/multimodal-images.md'
+    category: plan-doc
+    status: live
+  - rel: 'src/App.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/assets/logo.jpg'
+    category: react-source
+    status: live
+  - rel: 'src/commands/file-sync.ts'
+    category: react-source
+    status: live
+  - rel: 'src/commands/fs.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/chat/chat-input.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/chat/chat-message.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/chat/chat-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/editor/file-preview.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/editor/frontmatter-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/editor/wiki-editor.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/editor/wiki-reader.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/error-boundary.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/graph/graph-layout-worker.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/graph/graph-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/activity-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/app-layout-visibility.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/app-layout.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/content-area.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/file-tree.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/icon-sidebar.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/knowledge-tree.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/preview-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/research-panel-nav.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/research-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/sidebar-panel.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/layout/update-banner.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/lint/lint-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/mermaid-diagram.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/project/create-project-dialog.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/project/template-picker.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/project/welcome-screen.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/review/review-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/search/search-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/context-size-selector.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/llm-presets.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/preset-resolver.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/about-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/api-server-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/changelog-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/embedding-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/general-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/interface-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/llm-provider-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/maintenance-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/mineru-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/multimodal-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/network-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/output-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/scheduled-import-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/source-watch-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/sections/web-search-section.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/settings-types.ts'
+    category: react-source
+    status: live
+  - rel: 'src/components/settings/settings-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/sources/sources-view.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/button.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/dialog.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/input.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/label.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/resizable.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/scroll-area.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/separator.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/components/ui/tooltip.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/index.css'
+    category: react-source
+    status: live
+  - rel: 'src/lib/anytxt-search.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/api-server-constants.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/api-token.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/auto-save.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/azure-openai.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/changelog.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/chat-image-utils.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/chat-save-to-wiki.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/claude-cli-transport.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/clip-watcher.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/codex-cli-transport.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/connection-tests.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/context-budget.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dedup-queue.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dedup-runner.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dedup-storage.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dedup.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dedup_embedding.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/deep-research.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/detect-language.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/dimensions.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/embedding.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/endpoint-normalizer.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/engine-version.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/enrich-wikilinks.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/extract-source-images.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/file-types.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/frontmatter.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graph-filters.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graph-insights.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graph-relevance.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graph-search.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graph-visibility.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/greeting-detector.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/has-usable-llm.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/image-caption-pipeline.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/ingest-cache.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/ingest-queue.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/ingest-sanitize.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/ingest.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/keyboard-utils.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/language-metadata.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/latex-to-unicode.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/lint-fixes.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/lint.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/llm-client.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/llm-providers.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/markdown-image-resolver.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/mineru.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/optimize-research-topic.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/output-language-options.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/output-language.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/page-merge.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/path-utils.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/persist.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/project-file-sync.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/project-identity.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/project-mutex.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/project-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/proxy-config.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/raw-source-resolver.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/reasoning-detector.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/reset-project-state.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/review-create-page.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/review-utils.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/scheduled-import.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/search.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/source-delete-decision.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/source-identity.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/source-lifecycle.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/source-watch-config.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/source-watch-defaults.json'
+    category: react-source
+    status: live
+  - rel: 'src/lib/sources-merge.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/sources-tree-delete.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/sweep-reviews.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/tauri-fetch.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/templates.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/text-chunker.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/theme.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/update-check.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/utils.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/vision-caption.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/web-search.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-cleanup.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-filename.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-graph.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-page-delete.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-page-resolver.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-page-types.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-schema.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wiki-type-style.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/wikilink-transform.ts'
+    category: react-source
+    status: live
+  - rel: 'src/main.tsx'
+    category: react-source
+    status: live
+  - rel: 'src/stores/activity-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/chat-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/file-sync-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/lint-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/research-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/review-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/update-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/wiki-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/stores/zoom-store.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/deferred.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/fs-temp.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/load-test-env.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/mock-stream-chat.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/real-content.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/enrich-scenarios.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/ingest-scenarios.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/lint-scenarios.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/materialize.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/search-scenarios.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/sweep-scenarios.ts'
+    category: react-source
+    status: live
+  - rel: 'src/test-helpers/scenarios/types.ts'
+    category: react-source
+    status: live
+  - rel: 'src/types/wiki.ts'
+    category: react-source
+    status: live
+  - rel: 'src/vite-env.d.ts'
+    category: react-source
+    status: live
+  - rel: 'src-tauri/Cargo.lock'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/Cargo.toml'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/build.rs'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/capabilities/default.json'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/128x128.png'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/128x128@2x.png'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/32x32.png'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/icon.icns'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/icon.ico'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/icons/icon.png'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/pdfium/libpdfium-arm64.so'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/pdfium/libpdfium.dylib'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/pdfium/libpdfium.so'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/pdfium/pdfium.dll'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/tauri.conf.json'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/tauri.linux.conf.json'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/tauri.macos.conf.json'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/tauri.windows.conf.json'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/windows-app-manifest.xml'
+    category: rust-config
+    status: live
+  - rel: 'src-tauri/src/api_server.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/clip_server.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/claude_cli.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/cli_resolver.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/codex_cli.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/extract_images.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/file_sync.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/fs.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/mod.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/project.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/search.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/commands/vectorstore.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/lib.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/main.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/panic_guard.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/proxy.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/tray.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/types/mod.rs'
+    category: rust-source
+    status: live
+  - rel: 'src-tauri/src/types/wiki.rs'
+    category: rust-source
+    status: live
+  - rel: 'scripts/debug_ollama_tokens.py'
+    category: script
+    status: live
+  - rel: 'mcp-server/test/api-client.test.ts'
+    category: test
+    status: live
+  - rel: 'mcp-server/test/version.test.ts'
+    category: test
+    status: live
+  - rel: 'src/commands/fs.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/layout/app-layout-visibility.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/layout/research-panel-nav.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/lint/lint-view.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/mermaid-diagram.test.tsx'
+    category: test
+    status: live
+  - rel: 'src/components/project/create-project-dialog.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/settings/preset-resolver.test.ts'
+    category: test
+    status: live
+  - rel: 'src/components/settings/sections/api-server-section.test.ts'
+    category: test
+    status: live
+  - rel: 'src/i18n/i18n-parity.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/__tests__/claude-cli-transport.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/__tests__/dedup_embedding.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/__tests__/llm-providers.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/anytxt-search.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/api-server.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/api-token.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/auto-save.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/azure-openai.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/chat-save-to-wiki.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/codex-cli-transport.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/connection-tests.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/context-budget.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/dedup-queue.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/dedup-runner.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/dedup.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/deep-research.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/detect-language.property.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/detect-language.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/dimensions.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/embedding.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/embedding.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/endpoint-normalizer.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/engine-version.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/enrich-wikilinks.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/enrich-wikilinks.scenarios.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/enrich-wikilinks.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/extract-source-images.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/file-types.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/frontmatter.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/graph-filters.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/graph-search.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/graph-visibility.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/greeting-detector.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/has-usable-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/image-caption-pipeline.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-cache.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-parse.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-queue.integration.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-queue.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-sanitize.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest-source-path-collision.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest.prompt.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/ingest.scenarios.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/keyboard-utils.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/language-metadata.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/lint-dimensional.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/lint-fixes.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/lint.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/lint.scenarios.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/lint.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/llm-client.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/llm-client.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/llm-providers.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/markdown-image-resolver.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/mineru.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/optimize-research-topic.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/output-language.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/page-merge.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/path-utils.property.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/path-utils.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/persist.integration.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/project-file-sync.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/project-mutex.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/project-store.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/proxy-config.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/raw-source-resolver.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/reasoning-detector.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/reset-project-state.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/review-create-page.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/review-utils.property.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/review-utils.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/scheduled-import.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/search-rrf.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/search.scenarios.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/source-delete-decision.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/source-identity.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/source-lifecycle-delete.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/source-lifecycle.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/source-watch-config.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sources-merge.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sources-tree-delete.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-chained.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-reviews.property.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-reviews.race.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-reviews.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-reviews.scenarios.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/sweep-reviews.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/tauri-fetch.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/text-chunker.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/update-check.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/vision-caption.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/vision-caption.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/vision.real-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/web-search.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-cleanup.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-filename.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-page-delete.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-page-resolver.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-page-types.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-schema.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wiki-type-style.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/wikilink-transform.test.ts'
+    category: test
+    status: live
+  - rel: 'src/stores/chat-messages-to-llm.test.ts'
+    category: test
+    status: live
+  - rel: 'src/stores/lint-store.test.ts'
+    category: test
+    status: live
+  - rel: 'src/stores/review-store.property.test.ts'
+    category: test
+    status: live
+  - rel: 'src/stores/review-store.test.ts'
+    category: test
+    status: live
+  - rel: 'src/stores/wiki-store.test.ts'
+    category: test
+    status: live
+  - rel: 'docs/kb/tools/build_index.py'
+    category: tool
+    status: live
