@@ -1,6 +1,6 @@
 # INDEX_PATHS - Indice percorsi dominio llm_wiki_fork
 
-**Generato**: 2026-06-19T00:21:58Z - **Tool**: `docs/kb/tools/build_index.py` - **Totale file dominio**: **395**
+**Generato**: 2026-06-19T02:50:31Z - **Tool**: `docs/kb/tools/build_index.py` - **Totale file dominio**: **406**
 
 > Generato da `git ls-files` (rispetta `.gitignore`). Gemello machine-readable: `index_paths.yaml`.
 
@@ -16,19 +16,19 @@
 | i18n | 3 |
 | mcp-source | 7 |
 | plan-doc | 2 |
-| react-source | 179 |
+| react-source | 185 |
 | rust-config | 19 |
 | rust-source | 19 |
 | script | 1 |
-| test | 119 |
+| test | 124 |
 | tool | 1 |
-| **TOTALE** | **395** |
+| **TOTALE** | **406** |
 
 ## Conteggi per status
 
 | Status | File |
 |---|---|
-| live | 395 |
+| live | 406 |
 
 ## File per categoria
 
@@ -110,6 +110,7 @@
 - `src/components/editor/wiki-editor.tsx` - *live*
 - `src/components/editor/wiki-reader.tsx` - *live*
 - `src/components/error-boundary.tsx` - *live*
+- `src/components/export/export-view.tsx` - *live*
 - `src/components/graph/graph-layout-worker.ts` - *live*
 - `src/components/graph/graph-view.tsx` - *live*
 - `src/components/layout/activity-panel.tsx` - *live*
@@ -164,6 +165,8 @@
 - `src/lib/anytxt-search.ts` - *live*
 - `src/lib/api-server-constants.ts` - *live*
 - `src/lib/api-token.ts` - *live*
+- `src/lib/arbitration.ts` - *live*
+- `src/lib/archive-snapshot.ts` - *live*
 - `src/lib/auto-save.ts` - *live*
 - `src/lib/azure-openai.ts` - *live*
 - `src/lib/changelog.ts` - *live*
@@ -186,6 +189,7 @@
 - `src/lib/endpoint-normalizer.ts` - *live*
 - `src/lib/engine-version.ts` - *live*
 - `src/lib/enrich-wikilinks.ts` - *live*
+- `src/lib/export-mkdocs.ts` - *live*
 - `src/lib/extract-source-images.ts` - *live*
 - `src/lib/file-types.ts` - *live*
 - `src/lib/frontmatter.ts` - *live*
@@ -194,6 +198,7 @@
 - `src/lib/graph-relevance.ts` - *live*
 - `src/lib/graph-search.ts` - *live*
 - `src/lib/graph-visibility.ts` - *live*
+- `src/lib/graphify-graph.ts` - *live*
 - `src/lib/greeting-detector.ts` - *live*
 - `src/lib/has-usable-llm.ts` - *live*
 - `src/lib/image-caption-pipeline.ts` - *live*
@@ -204,6 +209,7 @@
 - `src/lib/keyboard-utils.ts` - *live*
 - `src/lib/language-metadata.ts` - *live*
 - `src/lib/latex-to-unicode.ts` - *live*
+- `src/lib/linked-sources.ts` - *live*
 - `src/lib/lint-fixes.ts` - *live*
 - `src/lib/lint.ts` - *live*
 - `src/lib/llm-client.ts` - *live*
@@ -337,6 +343,8 @@
 - `src/lib/anytxt-search.test.ts` - *live*
 - `src/lib/api-server.real-llm.test.ts` - *live*
 - `src/lib/api-token.test.ts` - *live*
+- `src/lib/arbitration.test.ts` - *live*
+- `src/lib/archive-snapshot.test.ts` - *live*
 - `src/lib/auto-save.test.ts` - *live*
 - `src/lib/azure-openai.test.ts` - *live*
 - `src/lib/chat-save-to-wiki.test.ts` - *live*
@@ -357,12 +365,14 @@
 - `src/lib/enrich-wikilinks.real-llm.test.ts` - *live*
 - `src/lib/enrich-wikilinks.scenarios.test.ts` - *live*
 - `src/lib/enrich-wikilinks.test.ts` - *live*
+- `src/lib/export-mkdocs.test.ts` - *live*
 - `src/lib/extract-source-images.test.ts` - *live*
 - `src/lib/file-types.test.ts` - *live*
 - `src/lib/frontmatter.test.ts` - *live*
 - `src/lib/graph-filters.test.ts` - *live*
 - `src/lib/graph-search.test.ts` - *live*
 - `src/lib/graph-visibility.test.ts` - *live*
+- `src/lib/graphify-graph.test.ts` - *live*
 - `src/lib/greeting-detector.test.ts` - *live*
 - `src/lib/has-usable-llm.test.ts` - *live*
 - `src/lib/image-caption-pipeline.test.ts` - *live*
@@ -377,6 +387,7 @@
 - `src/lib/ingest.scenarios.test.ts` - *live*
 - `src/lib/keyboard-utils.test.ts` - *live*
 - `src/lib/language-metadata.test.ts` - *live*
+- `src/lib/linked-sources.test.ts` - *live*
 - `src/lib/lint-dimensional.test.ts` - *live*
 - `src/lib/lint-fixes.test.ts` - *live*
 - `src/lib/lint.real-llm.test.ts` - *live*

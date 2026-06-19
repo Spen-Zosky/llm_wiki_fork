@@ -1,8 +1,8 @@
 # index_paths.yaml - indice percorsi dominio llm_wiki_fork (CLI-owned SoT)
-# generato: 2026-06-19T00:21:58Z da docs/kb/tools/build_index.py
+# generato: 2026-06-19T02:50:31Z da docs/kb/tools/build_index.py
 meta:
-  generated_at: "2026-06-19T00:21:58Z"
-  total_files: 395
+  generated_at: "2026-06-19T02:50:31Z"
+  total_files: 406
   repo: 'D:/enzospenuso/Documents/GitHub/llm_wiki_fork'
   category_counts:
     ci: 2
@@ -13,14 +13,14 @@ meta:
     i18n: 3
     mcp-source: 7
     plan-doc: 2
-    react-source: 179
+    react-source: 185
     rust-config: 19
     rust-source: 19
     script: 1
-    test: 119
+    test: 124
     tool: 1
   status_counts:
-    live: 395
+    live: 406
 files:
   - rel: '.github/workflows/build.yml'
     category: ci
@@ -229,6 +229,9 @@ files:
   - rel: 'src/components/error-boundary.tsx'
     category: react-source
     status: live
+  - rel: 'src/components/export/export-view.tsx'
+    category: react-source
+    status: live
   - rel: 'src/components/graph/graph-layout-worker.ts'
     category: react-source
     status: live
@@ -391,6 +394,12 @@ files:
   - rel: 'src/lib/api-token.ts'
     category: react-source
     status: live
+  - rel: 'src/lib/arbitration.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/archive-snapshot.ts'
+    category: react-source
+    status: live
   - rel: 'src/lib/auto-save.ts'
     category: react-source
     status: live
@@ -457,6 +466,9 @@ files:
   - rel: 'src/lib/enrich-wikilinks.ts'
     category: react-source
     status: live
+  - rel: 'src/lib/export-mkdocs.ts'
+    category: react-source
+    status: live
   - rel: 'src/lib/extract-source-images.ts'
     category: react-source
     status: live
@@ -479,6 +491,9 @@ files:
     category: react-source
     status: live
   - rel: 'src/lib/graph-visibility.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/graphify-graph.ts'
     category: react-source
     status: live
   - rel: 'src/lib/greeting-detector.ts'
@@ -509,6 +524,9 @@ files:
     category: react-source
     status: live
   - rel: 'src/lib/latex-to-unicode.ts'
+    category: react-source
+    status: live
+  - rel: 'src/lib/linked-sources.ts'
     category: react-source
     status: live
   - rel: 'src/lib/lint-fixes.ts'
@@ -898,6 +916,12 @@ files:
   - rel: 'src/lib/api-token.test.ts'
     category: test
     status: live
+  - rel: 'src/lib/arbitration.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/archive-snapshot.test.ts'
+    category: test
+    status: live
   - rel: 'src/lib/auto-save.test.ts'
     category: test
     status: live
@@ -958,6 +982,9 @@ files:
   - rel: 'src/lib/enrich-wikilinks.test.ts'
     category: test
     status: live
+  - rel: 'src/lib/export-mkdocs.test.ts'
+    category: test
+    status: live
   - rel: 'src/lib/extract-source-images.test.ts'
     category: test
     status: live
@@ -974,6 +1001,9 @@ files:
     category: test
     status: live
   - rel: 'src/lib/graph-visibility.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/graphify-graph.test.ts'
     category: test
     status: live
   - rel: 'src/lib/greeting-detector.test.ts'
@@ -1016,6 +1046,9 @@ files:
     category: test
     status: live
   - rel: 'src/lib/language-metadata.test.ts'
+    category: test
+    status: live
+  - rel: 'src/lib/linked-sources.test.ts'
     category: test
     status: live
   - rel: 'src/lib/lint-dimensional.test.ts'
