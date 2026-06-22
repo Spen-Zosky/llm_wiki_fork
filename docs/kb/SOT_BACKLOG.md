@@ -1,7 +1,19 @@
 # SOT_BACKLOG — Azioni da riprendere (CLI-owned)
 
 > Pendings + azioni pianificate da cui ripartire. Domini disgiunti: niente numeri di stato qui (→ `SOT_STATE.md`).
-> **Aggiornato**: 2026-06-19 (S2 — fusion sweep).
+> **Aggiornato**: 2026-06-22 (S-STAB-0 kickoff — programma di stabilizzazione avviato).
+
+## 🔵 Epic S-STAB — Stabilizzazione monolitica (avviata 2026-06-22)
+
+Programma completo → `docs/kb/improvement/`. Entry point: `MASTER_PLAN_STAB.md` + `TODO_STAB.md`.
+Scope: chiusura tutti i gap/debiti/incompletezze **dentro questo repo**. Nessun oggetto trasversale.
+
+| Fase | Sessioni | Stato |
+|---|---|---|
+| S-STAB-0 (setup) | questa | ✅ IN CORSO |
+| S-STAB-A1..A6 (audit WS) | 6 sessioni di audit | ⏳ TODO |
+| S-STAB-C (consolidamento) | 1 sessione | ⏳ TODO |
+| S-STAB-E1..E4 (esecuzione) | 4 sessioni epic | ⏳ TODO |
 
 ## 🟢 Aggiornamento S2 (2026-06-19) — Phases 2d→7
 
