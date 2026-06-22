@@ -1,5 +1,8 @@
 # Architecture Map — llm_wiki internals + fusion injection points
 
+> **Nota**: questo documento è il piano di fusione (2026-06-18). Le Phases 0–7-server sono
+> completate (S2, 2026-06-19). Vedi `docs/kb/SOT_STATE.md` per lo stato corrente.
+
 Knowledge captured from codebase exploration during the fusion kickoff (S1), so future phases
 don't have to re-discover it. Pattern: the **frontend (`src/lib/`, TS) orchestrates all
 ingest/lint/graph logic**; the Rust backend (`src-tauri/`) exposes only FS primitives, tokenized

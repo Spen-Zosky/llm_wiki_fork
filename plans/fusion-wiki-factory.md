@@ -1,6 +1,6 @@
 # Fusion Plan — llm_wiki × wiki-factory × graphify
 
-> **Status**: in progress — route C, **full-scope** (8 capabilities, phases 0-7). **Phase 0 ✅** (toolchain + build baseline on Windows/linux-pc/VM; 1534 tests green) · **Phase 1 ✅** (engine versioning + cache schema; +10 tests) · **Phase 2 ✅ 2a-2c** (dimensions taxonomy + dimensional lint + freshness stamping; +26 tests) · **Phase 2d / Phase 3 next**.
+> **Status**: ✅ COMPLETATO — Phases 0–7-server DONE (S2, 2026-06-19). Phase 7 client SPA + go-live PENDING (human-gated). Vedi `docs/kb/SOT_STATE.md` per snapshot granulare corrente.
 > **Created**: 2026-06-18
 > **Owner**: Enzo Spenuso (Spen-Zosky)
 > **Scope**: turn this fork (`Spen-Zosky/llm_wiki_fork`, fork of `nashsu/llm_wiki` v0.4.25) into a unified knowledge-base engine that absorbs the unique capabilities of `wiki-factory` (the personal LLM Wiki Engine, v1.3.0) and integrates `graphify` as a source-layer graph engine.

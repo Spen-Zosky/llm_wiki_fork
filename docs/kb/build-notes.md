@@ -46,4 +46,4 @@ memory `ref_tauri_lancedb_build`, kept in-repo so any clone/contributor has it.
 | linux-pc x86-64 | `/home/enzo/llm_wiki_fork` | ✅ `target/release/llm-wiki` 61M | ✅ (physical display) |
 | VM OCI ARM64 | `/home/ubuntu/llm_wiki_fork` | ✅ 54M | ❌ headless → web-target (#8, Model B host) |
 
-Node: Windows 24, linux-pc 22, VM 20 (all via nvm; all ≥ Vite 8 requirement).
+Node: Windows 24, linux-pc 22, VM 22 (all via nvm; all ≥ Vite 8 requirement).

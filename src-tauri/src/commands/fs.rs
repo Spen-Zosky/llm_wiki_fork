@@ -2141,6 +2141,9 @@ mod tests {
 
     #[test]
     fn allow_absolute_write_paths() {
+        // /tmp/... is absolute on Unix; on Windows it resolves relative to the current drive
+        // root and Path::new().is_absolute() correctly returns false for it.
+        #[cfg(unix)]
         assert!(require_absolute_path("write_file", "/tmp/project/wiki/sources/page.md").is_ok());
         assert!(require_absolute_path("write_file", "C:/project/wiki/sources/page.md").is_ok());
         assert!(require_absolute_path("write_file", r"C:\project\wiki\sources\page.md").is_ok());
